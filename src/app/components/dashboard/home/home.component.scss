@@ -1,0 +1,385 @@
+/* Home Component Specific Styles */
+
+/* =========================================
+   1. Dashboard Specific Layout Overrides
+   (Scoped strictly to avoid global breakage)
+   ========================================= */
+:host {
+    display: block;
+    margin-top: 20px;
+}
+
+/* =========================================
+   2. Dashboard Widget Styling (Glassmorphism)
+   ========================================= */
+.dashboard-widget {
+    background: linear-gradient(135deg, rgba(30, 30, 40, 0.85) 0%, rgba(20, 20, 25, 0.95) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 25px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    height: 160px;
+    /* Slightly taller for elegance */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+
+    /* Subtle Pattern Background Overlay */
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background-image:
+            radial-gradient(circle at 10% 10%, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+            radial-gradient(circle at 90% 90%, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 20px 20px;
+        opacity: 0.5;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    /* Hover State */
+    &:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6);
+        border-color: rgba(255, 255, 255, 0.2);
+
+        .widget-icon {
+            transform: scale(1.15) rotate(-10deg);
+        }
+    }
+
+    /* Content Layout */
+    .widget-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    /* Info Section (Numbers & Label) */
+    .widget-info {
+        h4 {
+            font-family: 'Inter', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 2px;
+            letter-spacing: -1px;
+            line-height: 1.1;
+        }
+
+        p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 500;
+            margin: 0;
+        }
+    }
+
+    /* Icon Container */
+    .widget-icon {
+        width: 64px;
+        height: 64px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        box-shadow: inset 0 0 15px rgba(255, 255, 255, 0.02);
+
+        i,
+        svg {
+            width: 28px;
+            height: 28px;
+            stroke-width: 2px;
+            transition: all 0.3s ease;
+        }
+    }
+
+    /* Variant Colors (Gradients & Accents) */
+    &.widget-purple {
+        background: radial-gradient(circle at top right, rgba(138, 43, 226, 0.1), transparent 70%),
+            linear-gradient(135deg, rgba(30, 30, 40, 0.95), rgba(20, 20, 25, 0.98));
+
+        .widget-icon {
+            color: #d946ef;
+            border-color: rgba(217, 70, 239, 0.2);
+            background: rgba(217, 70, 239, 0.1);
+        }
+
+        .widget-info h4 {
+            background: linear-gradient(to right, #fff, #f0abfc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    }
+
+    &.widget-blue {
+        background: radial-gradient(circle at top right, rgba(14, 165, 233, 0.1), transparent 70%),
+            linear-gradient(135deg, rgba(30, 30, 40, 0.95), rgba(20, 20, 25, 0.98));
+
+        .widget-icon {
+            color: #0ea5e9;
+            border-color: rgba(14, 165, 233, 0.2);
+            background: rgba(14, 165, 233, 0.1);
+        }
+
+        .widget-info h4 {
+            background: linear-gradient(to right, #fff, #7dd3fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    }
+
+    &.widget-orange {
+        background: radial-gradient(circle at top right, rgba(249, 115, 22, 0.1), transparent 70%),
+            linear-gradient(135deg, rgba(30, 30, 40, 0.95), rgba(20, 20, 25, 0.98));
+
+        .widget-icon {
+            color: #f97316;
+            border-color: rgba(249, 115, 22, 0.2);
+            background: rgba(249, 115, 22, 0.1);
+        }
+
+        .widget-info h4 {
+            background: linear-gradient(to right, #fff, #fdba74);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    }
+
+    &.widget-green {
+        background: radial-gradient(circle at top right, rgba(34, 197, 94, 0.1), transparent 70%),
+            linear-gradient(135deg, rgba(30, 30, 40, 0.95), rgba(20, 20, 25, 0.98));
+
+        .widget-icon {
+            color: #22c55e;
+            border-color: rgba(34, 197, 94, 0.2);
+            background: rgba(34, 197, 94, 0.1);
+        }
+
+        .widget-info h4 {
+            background: linear-gradient(to right, #fff, #86efac);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    }
+}
+
+/* =========================================
+   3. Dashboard Card (Tables Container) - Revamped
+   ========================================= */
+.dashboard-card {
+    background: #1e1e24;
+    background: linear-gradient(160deg, rgba(35, 35, 45, 0.95) 0%, rgba(20, 20, 25, 0.98) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    /* More rounded */
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    height: 100%;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    /* Top decorative line for a premium pop */
+    &::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, #ca26d9, #8e2de2, #ca26d9);
+        background-size: 200% 100%;
+        animation: gradientMove 4s linear infinite;
+    }
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .card-header {
+        background: transparent;
+        padding: 25px 30px 15px;
+        /* More padding */
+        border: none;
+
+        h5 {
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+
+            /* Remove the side bar, use text style instead */
+            &::before {
+                display: none;
+            }
+        }
+    }
+
+    .card-body {
+        padding: 0;
+    }
+}
+
+@keyframes gradientMove {
+    0% {
+        background-position: 100% 0;
+    }
+
+    100% {
+        background-position: 0 0;
+    }
+}
+
+/* =========================================
+   4. Table Styling (Premium & Beautiful)
+   ========================================= */
+.table-responsive {
+    padding: 0 10px 20px;
+    /* Spacing for potential shadows */
+
+    .table {
+        margin-bottom: 0;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+        /* Separate rows for card-like feel */
+        padding: 0 15px;
+
+        thead {
+            th {
+                background: transparent;
+                color: rgba(255, 255, 255, 0.4);
+                font-size: 0.7rem;
+                text-transform: uppercase;
+                letter-spacing: 1.2px;
+                font-weight: 700;
+                padding: 10px 15px;
+                border: none;
+            }
+        }
+
+        tbody {
+            tr {
+                background: rgba(255, 255, 255, 0.02);
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+                border-radius: 12px;
+                position: relative;
+
+                /* Inner border check workaround for border-radius on tr */
+                td:first-child {
+                    border-top-left-radius: 12px;
+                    border-bottom-left-radius: 12px;
+                }
+
+                td:last-child {
+                    border-top-right-radius: 12px;
+                    border-bottom-right-radius: 12px;
+                }
+
+                &:hover {
+                    background: rgba(255, 255, 255, 0.06);
+                    transform: scale(1.02);
+                    transform-origin: center;
+                    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+                    z-index: 2;
+
+                    td {
+                        color: #fff;
+
+                        /* Icon highlighting on hover */
+                        .fa-music,
+                        .feather {
+                            color: #ca26d9 !important;
+                            transform: scale(1.2);
+                        }
+                    }
+                }
+
+                td {
+                    padding: 15px 20px;
+                    vertical-align: middle;
+                    color: rgba(255, 255, 255, 0.85);
+                    font-size: 0.95rem;
+                    border: none;
+                    background: transparent;
+
+                    .d-flex {
+
+                        /* Ensure text creates a nice block */
+                        h6 {
+                            font-weight: 600;
+                            letter-spacing: 0.3px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* =========================================
+   5. Animations
+   ========================================= */
+.dashboard-widget,
+.dashboard-card {
+    animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    transform: translateY(30px);
+}
+
+@keyframes slideUpFade {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Stagger animations for a cascading effect */
+.col-sm-6:nth-child(1) .dashboard-widget {
+    animation-delay: 0.05s;
+}
+
+.col-sm-6:nth-child(2) .dashboard-widget {
+    animation-delay: 0.1s;
+}
+
+.col-sm-6:nth-child(3) .dashboard-widget {
+    animation-delay: 0.15s;
+}
+
+.col-sm-6:nth-child(4) .dashboard-widget {
+    animation-delay: 0.2s;
+}
+
+.row.mt-4>div:nth-child(1) .dashboard-card {
+    animation-delay: 0.3s;
+}
+
+.row.mt-4>div:nth-child(2) .dashboard-card {
+    animation-delay: 0.4s;
+}
+
+.row.mt-4>div:nth-child(3) .dashboard-card {
+    animation-delay: 0.5s;
+}

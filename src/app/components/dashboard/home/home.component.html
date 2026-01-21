@@ -1,0 +1,53 @@
+<app-breadcrumb [title]="'Home'" [items]="['Dashboard']" [active_item]="'Home'" icon="home"></app-breadcrumb>
+<div class="container-fluid">
+  <div class="row">
+    <!-- Users Widget -->
+    <div class="col-sm-6 col-xl-4 col-lg-6 mb-4">
+      <div class="dashboard-widget widget-purple">
+        <div class="widget-content">
+          <div class="widget-info">
+            <h4 class="counter" [CountTo]="users" [from]="0" [duration]="1">{{ users }}</h4>
+            <p>Total Users</p>
+          </div>
+          <div class="widget-icon">
+            <app-feather-icons [icon]="'users'"></app-feather-icons>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Musics Widget -->
+    <div class="col-sm-6 col-xl-4 col-lg-6 mb-4">
+      <div class="dashboard-widget widget-blue">
+        <div class="widget-content">
+          <div class="widget-info">
+            <h4 class="counter" [CountTo]="categories" [from]="0" [duration]="1">{{ categories }}</h4>
+            <p>Music Categories</p>
+          </div>
+          <div class="widget-icon">
+            <app-feather-icons [icon]="'music'"></app-feather-icons>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Events Widget -->
+    <div class="col-sm-6 col-xl-4 col-lg-6 mb-4">
+      <div class="dashboard-widget widget-orange">
+        <div class="widget-content">
+          <div class="widget-info">
+            <h4 class="counter" [CountTo]="events" [from]="0" [duration]="1">{{ events }}</h4>
+            <p>Total Events</p>
+          </div>
+          <div class="widget-icon">
+            <app-feather-icons [icon]="'calendar'"></app-feather-icons>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+
+</div>

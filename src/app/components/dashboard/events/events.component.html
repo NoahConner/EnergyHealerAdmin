@@ -1,0 +1,186 @@
+<app-breadcrumb [title]="'Events'" [items]="['Dashboard']" [active_item]="'Events'" icon="calendar"></app-breadcrumb>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-12 btnPadding">
+      <div class="card card-premium">
+        <div class="card-header d-flex justify-content-between align-items-center mb-4">
+          <h5 class="fw-bold">All Events</h5>
+          <button class="btn btn-premium" (click)="open('add')">
+            <i class="fa fa-plus-circle"></i> Add New Event
+          </button>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-sm-6 d-flex justify-content-start align-items-center mb-4">
+              <div class="search-premium mt-1 w-100">
+                <i class="fa fa-search"></i>
+                <input type="text" [(ngModel)]="searchInput" placeholder="Search events..." class="w-100" />
+              </div>
+            </div>
+
+            <div class="col-sm-12 mb-4">
+              <div class="table-premium-container table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Id</th>
+                      <th scope="col">Title</th>
+                      <th scope="col">Link</th>
+                      <th scope="col">Date</th>
+                      <th scope="col">Description</th>
+                      <th scope="col" class="text-center">Manage Status</th>
+                      <th scope="col" class="text-end">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngIf="(events | filter : searchInput)?.length; else noData">
+                      <tr
+                        *ngFor="let item of events | filter : searchInput | paginate: { itemsPerPage: 10, currentPage: duePage, totalItems: total }; let i = index">
+                        <th scope="row">{{ item?.id }}</th>
+                        <td>{{ item?.title }}</td>
+                        <td>
+                          <a *ngIf="item?.link" [href]="item.link" target="_blank"
+                            class="text-info text-truncate d-inline-block" style="max-width: 150px;">
+                            {{ item.link }}
+                          </a>
+                          <span *ngIf="!item?.link" class="text-muted small">N/A</span>
+                        </td>
+                        <td class="small">{{ item?.date ? (item.date | date:'mediumDate') : "N/A" }}</td>
+                        <td>
+                          <small class="text-muted text-truncate d-inline-block" style="max-width: 200px;"
+                            [title]="item?.description">
+                            {{ item?.description || "No description" }}
+                          </small>
+                        </td>
+                        <td class="text-center">
+                          <!-- Upcoming -->
+                          <button *ngIf="item?.event_status == 0" class="btn btn-warning btn-sm px-3"
+                            (click)="openStatusModal(startEventModal, item)">
+                            Upcoming
+                          </button>
+
+                          <!-- On-Going -->
+                          <button *ngIf="item?.event_status == 1" class="btn btn-success btn-sm px-3"
+                            (click)="openStatusModal(completeEventModal, item)">
+                            On-Going
+                          </button>
+
+                          <!-- Completed -->
+                          <button *ngIf="item?.event_status == 2" class="btn btn-secondary btn-sm px-3" disabled>
+                            Completed
+                          </button>
+                        </td>
+                        <td class="text-end">
+                          <div class="btn-group">
+                            <button class="btn btn-glass btn-sm" (click)="selectedEvent = item; open('edit')">
+                              <i class="fa fa-edit text-primary"></i>
+                            </button>
+                            <button class="btn btn-glass btn-sm ms-2" (click)="deleteEvent(item?.id)">
+                              <i class="fa fa-trash text-danger"></i>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    </ng-container>
+
+                    <ng-template #noData>
+                      <tr>
+                        <td colspan="7" class="text-center py-5 text-muted">
+                          <i class="fa fa-calendar-times-o fa-3x mb-3"></i>
+                          <p>No matching events available</p>
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="col-sm-12 d-flex justify-content-end mt-3 mb-4" *ngIf="events?.length">
+              <pagination-controls (pageChange)="duePage = $event"></pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Start Event Modal -->
+<ng-template #startEventModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Start Event</h5>
+    <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <p class="mb-4">Are you sure you want to start the event now?</p>
+    <form [formGroup]="statusForm">
+      <div class="mb-3">
+        <label class="form-label small">Event Link</label>
+        <input type="text" formControlName="link" class="form-control" placeholder="Enter event live link (URL)">
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-premium" (click)="confirmStartEvent(modal)">Send</button>
+  </div>
+</ng-template>
+
+<!-- Complete Event Modal -->
+<ng-template #completeEventModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Complete Event</h5>
+    <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body p-4 text-center">
+    <i class="fa fa-check-circle-o fa-4x text-success mb-3"></i>
+    <p class="mb-0">Are you sure you want to complete this event?</p>
+    <small class="text-muted d-block mt-2">This action will mark the event as finished.</small>
+  </div>
+  <div class="modal-footer justify-content-center">
+    <button type="button" class="btn btn-secondary px-4" (click)="modal.dismiss()">Cancel</button>
+    <button type="button" class="btn btn-success px-4" (click)="confirmCompleteEvent(modal)">Accept</button>
+  </div>
+</ng-template>
+
+<!-- Create/Edit Side Drawer -->
+<div class="side-drawer" [class.open]="isDrawerOpen">
+  <div class="drawer-header d-flex justify-content-between align-items-center">
+    <h3>{{state ? 'Edit Event' : 'Add New Event'}}</h3>
+    <button class="btn-close" (click)="proceed()"></button>
+  </div>
+  <div class="drawer-body custom-scrollbar">
+    <form [formGroup]="editForm" class="form px-2">
+      <div class="row">
+        <div class="col-lg-12 mb-3">
+          <label class="text-muted small">Title</label>
+          <input formControlName="title" type="text" placeholder="Event Title" class="form-control" />
+        </div>
+
+        <div class="col-lg-12 mb-3">
+          <label class="text-muted small">Date</label>
+          <input formControlName="date_time" type="datetime-local" class="form-control" />
+        </div>
+
+        <div class="col-lg-12 mb-3">
+          <label class="text-muted small">Description</label>
+          <textarea formControlName="description" rows="4" placeholder="Brief event description..."
+            class="form-control"></textarea>
+        </div>
+
+        <div class="col-lg-12 mb-3">
+          <label class="text-muted small">Permanent Link (Optional)</label>
+          <input formControlName="link" type="text" placeholder="https://..." class="form-control" />
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="drawer-footer bg-dark p-3 border-top border-secondary">
+    <button class="btn btn-primary w-100 mb-2 py-2 fw-bold" (click)="save()">{{ state ? 'Update Changes' : 'Create
+      Event' }}</button>
+    <button class="btn btn-outline-secondary w-100 py-2" (click)="proceed()">Cancel</button>
+  </div>
+</div>
+
+<div class="drawer-backdrop" *ngIf="isDrawerOpen" (click)="proceed()"></div>

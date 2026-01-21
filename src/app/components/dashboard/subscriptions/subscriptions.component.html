@@ -1,0 +1,229 @@
+<app-breadcrumb [title]="'Subscriptions'" [items]="['Dashboard']" [active_item]="'Subscriptions'"
+    icon="users"></app-breadcrumb>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12 btnPadding">
+            <div class="card card-premium">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5>Subscription Management</h5>
+                    </div>
+
+                    <!-- Tabs -->
+                    <ul class="nav nav-tabs premium-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link" [class.active]="activeTab === 'active_subscriptions'"
+                                (click)="setActiveTab('active_subscriptions')">
+                                Active Subscriptions
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" [class.active]="activeTab === 'expired_subscriptions'"
+                                (click)="setActiveTab('expired_subscriptions')">
+                                Expired Subscriptions
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" [class.active]="activeTab === 'trial_users'"
+                                (click)="setActiveTab('trial_users')">
+                                Trial Users
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" [class.active]="activeTab === 'registered_users'"
+                                (click)="setActiveTab('registered_users')">
+                                Registered Users
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 d-flex justify-content-start align-items-center mb-4">
+                            <div class="search-premium w-100">
+                                <i class="fa fa-search"></i>
+                                <input type="text" [(ngModel)]="searchInput" placeholder="Search..." class="w-100" />
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                            <div class="table-premium-container table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">S#</th>
+                                            <th scope="col">ID#</th>
+                                            <th scope="col">User Name</th>
+                                            <th scope="col">Email</th>
+
+                                            <!-- Active & Expired specific -->
+                                            <th scope="col" *ngIf="activeTab === 'active_subscriptions'">Subscription
+                                                Start Date</th>
+                                            <!-- <th scope="col" *ngIf="activeTab === 'active_subscriptions'">Detail</th> -->
+
+                                            <th scope="col" *ngIf="activeTab === 'expired_subscriptions'">Subscription
+                                                Start Date</th>
+
+                                            <!-- Trial specific -->
+                                            <th scope="col" *ngIf="activeTab === 'trial_users'">Trial Start Date</th>
+                                            <th scope="col" *ngIf="activeTab === 'trial_users'">Trial End Date</th>
+                                            <th scope="col" *ngIf="activeTab === 'trial_users'">Remaining Days</th>
+
+                                            <!-- Registered specific -->
+                                            <th scope="col" *ngIf="activeTab === 'registered_users'">Contact No#</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <ng-container *ngIf="(currentList | filter : searchInput)?.length; else noData">
+                                            <tr
+                                                *ngFor="let item of currentList | filter : searchInput | paginate : { itemsPerPage: 10, currentPage: duePage }; let i = index">
+                                                <!-- Serial Number -->
+                                                <td>{{ (duePage - 1) * 10 + i + 1 }}</td>
+
+                                                <!-- ID -->
+                                                <td>
+                                                    <ng-container *ngIf="activeTab === 'trial_users'">{{ item?.user_id
+                                                        }}</ng-container>
+                                                    <ng-container
+                                                        *ngIf="activeTab === 'active_subscriptions' || activeTab === 'expired_subscriptions'">{{
+                                                        item?.user?.id }}</ng-container>
+                                                    <ng-container *ngIf="activeTab === 'registered_users'">{{ item?.id
+                                                        }}</ng-container>
+                                                </td>
+
+                                                <!-- Name -->
+                                                <td>
+                                                    <ng-container
+                                                        *ngIf="activeTab === 'trial_users' || activeTab === 'registered_users'">{{
+                                                        item?.name || 'N/A' }}</ng-container>
+                                                    <ng-container
+                                                        *ngIf="activeTab === 'active_subscriptions' || activeTab === 'expired_subscriptions'">{{
+                                                        item?.user?.name || 'N/A' }}</ng-container>
+                                                </td>
+
+                                                <!-- Email -->
+                                                <td>
+                                                    <ng-container
+                                                        *ngIf="activeTab === 'trial_users' || activeTab === 'registered_users'">{{
+                                                        item?.email || 'N/A' }}</ng-container>
+                                                    <ng-container
+                                                        *ngIf="activeTab === 'active_subscriptions' || activeTab === 'expired_subscriptions'">{{
+                                                        item?.user?.email || 'N/A' }}</ng-container>
+                                                </td>
+
+                                                <ng-container *ngIf="activeTab === 'active_subscriptions'">
+                                                    <td>{{ item?.formatted_transaction_date | date:'medium' || 'N/A' }}
+                                                    </td>
+                                                    <!-- <td>
+                                                        <button *ngIf="item?.subscription_data"
+                                                            class="btn btn-primary btn-sm view-details"
+                                                            (click)="viewDetails(item, receiptModal)">Detail</button>
+                                                    </td> -->
+                                                </ng-container>
+
+                                                <!-- Expired Subscriptions Specific -->
+                                                <ng-container *ngIf="activeTab === 'expired_subscriptions'">
+                                                    <td>{{ item?.created_at | date:'medium' || 'N/A' }}</td>
+                                                </ng-container>
+
+                                                <!-- Trial Users Specific -->
+                                                <ng-container *ngIf="activeTab === 'trial_users'">
+                                                    <td>{{ item?.trial_start_time | date:'yyyy-MM-dd' || 'N/A' }}</td>
+                                                    <td>{{ item?.trial_end_time | date:'yyyy-MM-dd' || 'N/A' }}</td>
+                                                    <td>{{ item?.remaining_days }}</td>
+                                                </ng-container>
+
+                                                <!-- Registered Users Specific -->
+                                                <ng-container *ngIf="activeTab === 'registered_users'">
+                                                    <td>{{ item?.phone_number || 'N/A' }}</td>
+                                                </ng-container>
+
+                                            </tr>
+                                        </ng-container>
+                                        <ng-template #noData>
+                                            <tr>
+                                                <td [attr.colspan]="activeTab === 'trial_users' ? 7 : (activeTab === 'active_subscriptions' ? 6 : 5)"
+                                                    class="text-center white">No Data Available</td>
+                                            </tr>
+                                        </ng-template>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12 d-flex justify-content-end mt-4" *ngIf="currentList?.length">
+                            <pagination-controls (pageChange)="duePage = $event"></pagination-controls>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Details Modal -->
+<ng-template #receiptModal let-modal>
+    <div class="modal-header customModalHeaderT" style="background-color: #1a2035; color: white;">
+        <h5 class="modal-title">Subscription History Detail</h5>
+        <button type="button" class="btn-close btn-close-white" aria-label="Close"
+            (click)="modal.dismiss('Cross click')"></button>
+    </div>
+    <div class="modal-body" style="background-color: #2b3040; color: #fff;">
+        <ul class="nav nav-tabs premium-tabs mb-3" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <li class="nav-item">
+                <a class="nav-link" [class.active]="activeModalTab === 1" (click)="activeModalTab = 1">Newest
+                    History</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" [class.active]="activeModalTab === 2" (click)="activeModalTab = 2">Oldest
+                    History</a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <!-- Newest History -->
+            <div *ngIf="activeModalTab === 1">
+                <div class="mt-3">
+                    <div *ngIf="!receiptDetails?.latest?.length" class="p-3 text-center opacity-50">No Newest History
+                        Available</div>
+                    <div *ngFor="let item of receiptDetails?.latest; let i = index" class="p-3 mb-3 border-bottom"
+                        style="border-color: rgba(255,255,255,0.1) !important;">
+                        <h5 class="text-primary">In-App Purchase {{i + 1}}</h5>
+                        <p><strong>Product ID:</strong> {{item.product_id}}</p>
+                        <p><strong>Transaction ID:</strong> {{item.transaction_id}}</p>
+                        <p><strong>Original Transaction ID:</strong> {{item.original_transaction_id}}</p>
+                        <p><strong>Purchase Date:</strong> {{item.purchase_date | date:'medium'}}</p>
+                        <p><strong>Original Purchase Date:</strong> {{item.original_purchase_date | date:'medium'}}</p>
+                        <p><strong>Expires Date:</strong> {{item.expires_date | date:'medium'}}</p>
+                        <p><strong>Trial Period:</strong> {{item.is_trial_period}}</p>
+                        <p><strong>Intro Offer Period:</strong> {{item.is_in_intro_offer_period}}</p>
+                        <p><strong>Ownership Type:</strong> {{item.in_app_ownership_type}}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Oldest History -->
+            <div *ngIf="activeModalTab === 2">
+                <div class="mt-3">
+                    <div *ngIf="!receiptDetails?.oldest?.length" class="p-3 text-center opacity-50">No Oldest History
+                        Available</div>
+                    <div *ngFor="let item of receiptDetails?.oldest; let i = index" class="p-3 mb-3 border-bottom"
+                        style="border-color: rgba(255,255,255,0.1) !important;">
+                        <h5 class="text-primary">In-App Purchase {{i + 1}}</h5>
+                        <p><strong>Product ID:</strong> {{item.product_id}}</p>
+                        <p><strong>Transaction ID:</strong> {{item.transaction_id}}</p>
+                        <p><strong>Original Transaction ID:</strong> {{item.original_transaction_id}}</p>
+                        <p><strong>Purchase Date:</strong> {{item.purchase_date | date:'medium'}}</p>
+                        <p><strong>Original Purchase Date:</strong> {{item.original_purchase_date | date:'medium'}}</p>
+                        <p><strong>Expires Date:</strong> {{item.expires_date | date:'medium'}}</p>
+                        <p><strong>Trial Period:</strong> {{item.is_trial_period}}</p>
+                        <p><strong>Intro Offer Period:</strong> {{item.is_in_intro_offer_period}}</p>
+                        <p><strong>Ownership Type:</strong> {{item.in_app_ownership_type}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

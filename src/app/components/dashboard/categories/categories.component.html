@@ -1,0 +1,139 @@
+<app-breadcrumb [title]="'Categories'" [items]="['Dashboard']" [active_item]="'Categories'"
+    icon="list"></app-breadcrumb>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12 btnPadding">
+            <div class="card card-premium">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>All Categories</h5>
+                    <button class="btn btn-premium btn-sm" (click)="open('add')">
+                        <i class="fa fa-plus"></i> Add Category
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 d-flex justify-content-start align-items-center mb-4">
+                            <div class="search-premium w-100">
+                                <i class="fa fa-search"></i>
+                                <input type="text" [(ngModel)]="searchInput" placeholder="Search categories..."
+                                    class="w-100" />
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mb-4">
+                            <div class="table-premium-container table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Id</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Image</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <ng-container *ngIf="(categories | filter : searchInput)?.length; else noData">
+                                            <tr
+                                                *ngFor="let item of categories | filter : searchInput | paginate : { itemsPerPage: 5, currentPage: duePage, totalItems: total }; let i = index">
+                                                <th scope="row">{{ item?.id }}</th>
+                                                <td>{{ item?.name }}</td>
+                                                <td>
+                                                    <img [src]="item?.image" alt="Category" class="img-30 me-2"
+                                                        *ngIf="item?.image">
+                                                    <span *ngIf="!item?.image">N/A</span>
+                                                </td>
+                                                <td>
+                                                    <div
+                                                        class="toggle d-flex align-items-center w-100 justify-content-center">
+                                                        <input (change)="updateStatus($event, item)" class="checkBox"
+                                                            type="checkbox" [checked]="item?.status == '1'"
+                                                            [id]="'cat' + i" />
+                                                        <label [for]="'cat' + i"></label>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group">
+                                                        <button class="btn btn-glass btn-sm" placement="top"
+                                                            (click)="selectedCategory = item; open('edit')"
+                                                            title="Edit">
+                                                            <i class="fa fa-edit text-primary"></i>
+                                                        </button>
+                                                        <!-- <button class="btn btn-glass btn-sm ms-2"
+                                                            (click)="deleteCategory(item?.id)" title="Delete">
+                                                            <i class="fa fa-trash text-danger"></i>
+                                                        </button> -->
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                        <ng-template #noData>
+                                            <tr *ngIf="categories?.length">
+                                                <td colspan="5" class="text-center white">
+                                                    No Matching Data Available
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                        <tr *ngIf="!categories?.length">
+                                            <td class="text-center white" colspan="5">
+                                                No data available
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 d-flex justify-content-end mt-4" *ngIf="categories?.length">
+                            <pagination-controls (pageChange)="duePage = $event"></pagination-controls>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Side Drawer -->
+<div class="side-drawer" [class.open]="isDrawerOpen">
+    <div class="drawer-header d-flex justify-content-between align-items-center">
+        <h3>{{state ? 'Edit Category' : 'Add Category'}}</h3>
+        <button class="btn-close" (click)="proceed()"></button>
+    </div>
+    <div class="drawer-body custom-scrollbar">
+        <form [formGroup]="editForm" class="form">
+            <div class="row">
+                <div class="col-lg-12 mb-3">
+                    <label>Name</label>
+                    <input formControlName="name" type="text" placeholder="Name" class="form-control" />
+                    <div
+                        *ngIf="editForm.controls['name'].invalid && (editForm.controls['name'].dirty || editForm.controls['name'].touched)">
+                        <small class="text-danger">Name is required</small>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 mb-3">
+                    <label>Category Image</label>
+                    <div class="image-upload-wrapper">
+                        <input type="file" id="imageInput" (change)="onImageSelected($event)" class="d-none" />
+                        <label for="imageInput" class="upload-btn">
+                            <i class="fas fa-camera"></i> {{ editForm.get('image')?.value ? 'Change Photo' : 'Upload
+                            Photo' }}
+                        </label>
+                        <div class="preview-img" *ngIf="editForm.get('image')?.value">
+                            <img [src]="editForm.get('image')?.value" alt="Category Image" />
+                        </div>
+                    </div>
+                    <div
+                        *ngIf="editForm.controls['image'].invalid && (editForm.controls['image'].dirty || editForm.controls['image'].touched)">
+                        <small class="text-danger">Image is required</small>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="drawer-footer">
+        <button class="btn btn-primary w-100 mb-2" (click)="save()">Save Changes</button>
+        <button class="btn btn-outline-secondary w-100" (click)="proceed()">Cancel</button>
+    </div>
+</div>
+
+<div class="drawer-backdrop" *ngIf="isDrawerOpen" (click)="proceed()"></div>

@@ -1,0 +1,111 @@
+<app-breadcrumb [title]="'Notifications'" [items]="['Dashboard']" [active_item]="'Notifications'"
+  icon="bell"></app-breadcrumb>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-12">
+      <form [formGroup]="notificationForm" class="theme-form">
+        <div class="form-group">
+          <label class="col-form-label">Title</label>
+          <input class="form-control" type="text" required="" placeholder="Title here.." formControlName="title" />
+          <div *ngIf="
+              notificationForm.controls.title.invalid &&
+              (notificationForm.controls.title.dirty ||
+                notificationForm.controls.title.touched)
+            ">
+            <small class="text-danger">Title is required</small>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-form-label">Message</label>
+          <textarea class="form-control" type="text" required="" placeholder="Message here.."
+            formControlName="description"></textarea>
+          <div *ngIf="
+              notificationForm.controls.description.invalid &&
+              (notificationForm.controls.description.dirty ||
+                notificationForm.controls.description.touched)
+            ">
+            <small class="text-danger">description is required</small>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <div class="d-flex justify-content-between align-items-center mb-0">
+            <h5>Select Users</h5>
+            <ul class="nav nav-tabs premium-tabs border-0 mb-0">
+              <li class="nav-item">
+                <a class="nav-link cursor-pointer" [class.active]="activeTab === 'all'" (click)="onTabChange('all')">All
+                  Users</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link cursor-pointer" [class.active]="activeTab === 'active'"
+                  (click)="onTabChange('active')">Active Users</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-sm-6 d-flex justify-content-start align-items-center">
+              <div class="searchField mt-1 w-100">
+                <input type="text" [(ngModel)]="searchInput" placeholder="Search" class="w-100 white" />
+                <i class="fa fa-search"></i>
+              </div>
+            </div>
+            <div class="col-sm-12">
+              <div class="order-history table-responsive wishlist">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">
+<input type="checkbox" [checked]="isAllUsersSelected()" (change)="toggleSelectAll($event.target)" />                      </th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Email</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngIf="(filteredUsers | filter : searchInput)?.length; else noData">
+                    <tr
+                      *ngFor="let item of filteredUsers | filter: searchInput | paginate: { itemsPerPage: itemsPerPage, currentPage: duePage, totalItems: total }">
+                      <td>
+                        <input type="checkbox" [checked]="item.checked" (change)="toggleUserSelection(item, $event)" />
+                      </td>
+                      <td>{{ item?.name || 'N/A' }}</td>
+                      <td>{{ item?.email || 'N/A' }}</td>
+                    </tr>
+
+                    </ng-container>
+                    <ng-template #noData>
+                      <tr *ngIf="filteredUsers?.length">
+                        <td colspan="5" class="text-center white">No Matching Data Available</td>
+                      </tr>
+                    </ng-template>
+                    <tr *ngIf="!filteredUsers?.length">
+                      <td class="text-center white" colspan="5">No data available</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="col-sm-12 d-flex justify-content-between" *ngIf="filteredUsers?.length">
+              <select style="border-radius: 7px; box-shadow: 0 0 4px rgb(163, 137, 210);" id="itemsPerPage"
+                [(ngModel)]="itemsPerPage">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option [value]="filteredUsers?.length">All</option>
+              </select>
+              <pagination-controls (pageChange)="duePage = $event"></pagination-controls>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-12 mt-3 btnPadding">
+      <button class="btn btn-primary btn-block" [disabled]="!notificationForm.valid" (click)="save()" type="button">
+        <span>Send</span>
+      </button>
+    </div>
+  </div>
+</div>

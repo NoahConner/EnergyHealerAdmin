@@ -1,0 +1,26 @@
+<!-- Page Header Start-->
+<div class="page-header" [class.close_icon]="navServices.collapseSidebar">
+  <div class="header-wrapper row m-0 justify-content-end">
+    <div class="header-logo-wrapper">
+      <div class="logo-wrapper">
+          <app-img [styles]="{  'width': '100px', 'height': '100px', 'object-fit': 'contain' }" classes="img-fluid" src="assets/1x/AppLogo.webp"></app-img>
+      </div>
+      <div class="toggle-sidebar" (click)="sidebarToggle()">
+        <app-feather-icons [icon]="'align-center'" class="status_toggle middle"></app-feather-icons>
+      </div>
+    </div>
+    <div class="nav-right col-8 pull-right right-header p-0">
+      <div class="lgoutButton justify-content-end">
+        <button class="btn btn-primary" (click)="logout()">
+          Logout
+        </button>
+      </div>
+      <ul class="nav-menus">
+        <li class="profile-nav onhover-dropdown p-0 lgoutButtonHide">
+           <app-my-account></app-my-account>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+<!-- Page Header Ends -->

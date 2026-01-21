@@ -1,0 +1,79 @@
+<div class="login-page">
+  <div class="login-wrapper">
+    <div class="login-aside">
+      <div class="aside-content">
+        <div class="energy-logo pulse">
+          <img src="assets/images/logo/logo1.png" alt="Energy Healer">
+        </div>
+        <h1>Energy Healer</h1>
+        <p>Restoring balance and harmony to your inner self. Your management gateway to spiritual wellness.</p>
+        <div class="energy-waves">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="login-main-area">
+      <div class="login-card-container">
+        <div class="login-header text-center">
+          <div class="mobile-logo mb-4 d-block d-lg-none">
+            <img src="assets/images/logo/logo1.png" alt="Energy Healer" style="max-height: 80px;">
+          </div>
+          <h2>Welcome Back</h2>
+          <p>Please enter your credentials to access the admin portal.</p>
+        </div>
+
+        <form class="theme-form" [formGroup]="loginForm" (ngSubmit)="login()">
+          <div class="form-group mb-4">
+            <label class="col-form-label">Email Address</label>
+            <div class="input-with-icon">
+              <i class="fa fa-envelope-o"></i>
+              <input class="form-control premium-input" type="email" placeholder="test@energy-healer.com"
+                formControlName="email">
+            </div>
+            <div *ngIf="loginForm.controls?.['email']?.touched && loginForm.controls?.['email']?.errors?.['required']"
+              class="text-danger mt-1 small">
+              Email is required
+            </div>
+            <div *ngIf="loginForm.controls?.['email']?.touched && loginForm.controls?.['email']?.errors?.['email']"
+              class="text-danger mt-1 small">
+              Please enter a valid email address
+            </div>
+          </div>
+
+          <div class="form-group mb-4">
+            <label class="col-form-label">Password</label>
+            <div class="input-with-icon position-relative">
+              <i class="fa fa-lock"></i>
+              <input class="form-control premium-input" [type]="show ? 'text' : 'password'" placeholder="123456789"
+                formControlName="password">
+              <div class="show-hide-toggle" (click)="showPassword()">
+                <i class="fa" [ngClass]="show ? 'fa-eye-slash' : 'fa-eye'"></i>
+              </div>
+            </div>
+            <div *ngIf="loginForm.controls['password'].touched && loginForm.controls['password'].invalid"
+              class="text-danger mt-1 small">
+              Password is required
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="custom-checkbox">
+              <input type="checkbox" id="rememberMe">
+              <label for="rememberMe">Remember me</label>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-energy-primary w-100 py-3" [disabled]="!loginForm.valid">
+            Login </button>
+        </form>
+
+        <div class="login-footer-text mt-5">
+          <p>&copy; 2026 Energy Healer Admin Dashboard. Optimized for peace and efficiency.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

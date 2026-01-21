@@ -1,0 +1,184 @@
+<app-breadcrumb [title]="'Music Management'" [items]="['Dashboard']" [active_item]="'Music'"
+    icon="music"></app-breadcrumb>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12 btnPadding">
+            <div class="card card-premium">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5>Music Library</h5>
+                    <button class="btn btn-premium btn-sm" (click)="open('add')">
+                        <i class="fa fa-plus"></i> Add Music
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-6 d-flex justify-content-start align-items-center mb-4">
+                            <div class="search-premium w-100">
+                                <i class="fa fa-search"></i>
+                                <input type="text" [(ngModel)]="searchInput" placeholder="Search music..."
+                                    class="w-100" />
+                            </div>
+                        </div>
+                        <div class="col-sm-12 mb-4">
+                            <div class="table-premium-container table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Id</th>
+                                            <th scope="col">Title</th>
+                                            <th scope="col">Artist</th>
+                                            <th scope="col">Category</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <ng-container *ngIf="(musicList | filter : searchInput)?.length; else noData">
+                                            <tr
+                                                *ngFor="let item of musicList | filter : searchInput | paginate : { itemsPerPage: 5, currentPage: duePage, totalItems: total }; let i = index">
+                                                <th scope="row">{{ item?.id }}</th>
+                                                <td>{{ item?.title }}</td>
+                                                <td>{{ item?.artist }}</td>
+                                                <td>{{ item?.category_name || 'N/A' }}</td>
+
+                                                <td>
+                                                    <div
+                                                        class="toggle d-flex align-items-center w-100 justify-content-center">
+                                                        <input (change)="updateStatus($event, item)" class="checkBox"
+                                                            type="checkbox" [checked]="item?.status == '1'"
+                                                            [id]="'music' + i" />
+                                                        <label [for]="'music' + i"></label>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group">
+                                                        <button class="btn btn-glass btn-sm" placement="top"
+                                                            (click)="selectedMusic = item; open('edit')" title="Edit">
+                                                            <i class="fa fa-edit text-primary"></i>
+                                                        </button>
+                                                        <button class="btn btn-glass btn-sm ms-2"
+                                                            (click)="deleteMusic(item?.id)" title="Delete">
+                                                            <i class="fa fa-trash text-danger"></i>
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </ng-container>
+                                        <ng-template #noData>
+                                            <tr *ngIf="musicList?.length">
+                                                <td colspan="6" class="text-center white">
+                                                    No Matching Data Available
+                                                </td>
+                                            </tr>
+                                        </ng-template>
+                                        <tr *ngIf="!musicList?.length">
+                                            <td class="text-center white" colspan="6">
+                                                No data available
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 d-flex justify-content-end mt-4" *ngIf="musicList?.length">
+                            <pagination-controls (pageChange)="duePage = $event"></pagination-controls>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Side Drawer -->
+<div class="side-drawer" [class.open]="isDrawerOpen">
+    <div class="drawer-header d-flex justify-content-between align-items-center">
+        <h3>{{state ? 'Edit Music' : 'Add Music'}}</h3>
+        <button class="btn-close" (click)="proceed()"></button>
+    </div>
+    <div class="drawer-body custom-scrollbar">
+        <form [formGroup]="editForm" class="form">
+            <div class="row">
+
+                <div class="col-lg-12 mb-3">
+                    <label>Category</label>
+                    <select class="form-control" formControlName="category_id">
+                        <option [value]="null" disabled selected>Select Category</option>
+                        <option *ngFor="let cat of categories" [value]="cat.id">{{cat.name}}</option>
+                    </select>
+                    <div
+                        *ngIf="editForm.controls['category_id'].invalid && (editForm.controls['category_id'].dirty || editForm.controls['category_id'].touched)">
+                        <small class="text-danger">Category is required</small>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 mb-3">
+                    <label>Title</label>
+                    <input formControlName="title" type="text" placeholder="Song Title" class="form-control" />
+                    <div
+                        *ngIf="editForm.controls['title'].invalid && (editForm.controls['title'].dirty || editForm.controls['title'].touched)">
+                        <small class="text-danger">Title is required</small>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 mb-3">
+                    <label>Artist Name</label>
+                    <input formControlName="artist_name" type="text" placeholder="Artist Name" class="form-control" />
+                    <div
+                        *ngIf="editForm.controls['artist_name'].invalid && (editForm.controls['artist_name'].dirty || editForm.controls['artist_name'].touched)">
+                        <small class="text-danger">Artist Name is required</small>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 mb-3">
+                    <label>Cover Image</label>
+                    <div class="image-upload-wrapper">
+                        <input type="file" id="imageInput" (change)="onImageSelected($event)" class="d-none"
+                            accept="image/*" />
+                        <label for="imageInput" class="upload-btn">
+                            <i class="fas fa-camera"></i> {{ editForm.get('music_image')?.value ? 'Change Cover' :
+                            'Upload
+                            Cover' }}
+                        </label>
+                        <div class="preview-img" *ngIf="editForm.get('music_image')?.value">
+                            <img [src]="editForm.get('music_image')?.value" alt="Cover" />
+                        </div>
+                    </div>
+                    <div
+                        *ngIf="editForm.controls['music_image'].invalid && (editForm.controls['music_image'].dirty || editForm.controls['music_image'].touched)">
+                        <small class="text-danger">Image is required</small>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 mb-3">
+                    <label>Audio File</label>
+                    <div class="image-upload-wrapper">
+                        <input type="file" id="audioInput" (change)="onAudioSelected($event)" class="d-none"
+                            accept="audio/*" />
+                        <label for="audioInput" class="upload-btn">
+                            <i class="fas fa-music"></i> {{ editForm.get('music')?.value ? 'Change Audio' : 'Upload
+                            Audio' }}
+                        </label>
+                        <div class="mt-2" *ngIf="editForm.get('music')?.value">
+                            <small class="text-success"><i class="fa fa-check-circle"></i> Audio Uploaded</small>
+                            <audio controls class="w-100 mt-2">
+                                <source [src]="editForm.get('music')?.value" type="audio/mpeg">
+                            </audio>
+                        </div>
+                    </div>
+                    <div
+                        *ngIf="editForm.controls['music'].invalid && (editForm.controls['music'].dirty || editForm.controls['music'].touched)">
+                        <small class="text-danger">Audio is required</small>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+    <div class="drawer-footer">
+        <button class="btn btn-primary w-100 mb-2" (click)="save()">Save Changes</button>
+        <button class="btn btn-outline-secondary w-100" (click)="proceed()">Cancel</button>
+    </div>
+</div>
+
+<div class="drawer-backdrop" *ngIf="isDrawerOpen" (click)="proceed()"></div>

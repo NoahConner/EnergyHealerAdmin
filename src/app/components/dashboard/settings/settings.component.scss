@@ -1,0 +1,30 @@
+.icon-wrapper {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  cursor: pointer;
+  color: white;
+}
+.user-image {
+  position: relative;
+  width: fit-content;
+  background: #dc3545;
+  padding: 1rem;
+  border-radius: 1rem;
+  overflow: hidden;
+}
+.btnPadding {
+  padding-bottom: 6rem;
+}
+/* Add the following CSS styles to customize the eye icon */
+.input-group-text {
+  cursor: pointer;
+}
+
+.input-group-text {
+    background-color: transparent;
+    border: none;
+    position: absolute;
+    right: 0;
+    z-index: 1000;
+}

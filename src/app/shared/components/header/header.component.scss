@@ -1,0 +1,17 @@
+.status_toggle{
+    color: #161f3c;
+}
+.lgoutButton{
+    display: none;
+}
+.lgoutButtonHide{
+    display: block;
+}
+@media only screen and (max-width:768px){
+    .lgoutButton{
+        display: flex;
+    }
+    .lgoutButtonHide{
+        display: none;
+    }
+}

@@ -1,0 +1,24 @@
+// .fa-link , .fa-house{
+//     padding-right: 6px;
+// }
+// li{
+//    margin-bottom:18px;
+// }
+.active{
+    .linkIcon{
+        color: #e8e6e9;
+        padding-right: 5px;
+    }
+}
+.linkIcon{
+    color: var(--theme-deafult);
+    padding-right: 5px;
+}
+.fa-bars{
+    color: white;
+    font-size: 18px;
+}
+
+div#sidebar-menu {
+    height: 48.5rem;
+}

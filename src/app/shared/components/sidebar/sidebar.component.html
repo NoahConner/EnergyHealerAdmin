@@ -1,0 +1,73 @@
+<div class="logo-wrapper">
+  <a [routerLink]="['/dashboard/home']" class="d-flex align-items-center justify-content-center"
+    style="gap: 12px; text-decoration: none;">
+    <app-img [styles]="{ 'height': '35px', 'width': 'auto', 'object-fit': 'contain' }" classes="img-fluid for-dark"
+      src="assets/images/logo/logo1.png" alt="Energy Healer"></app-img>
+    <h3 class="logo-text m-0" style="font-size: 1.25rem; font-weight: 700; color: #fff; letter-spacing: 0.5px;">Energy
+      Healer</h3>
+  </a>
+  <div class="back-btn" (click)="sidebarToggle()"><i class="fa fa-angle-left"></i></div>
+</div>
+<div class="logo-icon-wrapper">
+  <a [routerLink]="['/dashboard/home']">
+    <app-img [styles]="{ 'width': '40px', 'height': '40px', 'object-fit': 'contain' }"
+      src="assets/images/logo/logo1.png" alt="M"></app-img>
+  </a>
+</div>
+<nav class="sidebar-main">
+  <div class="left-arrow" id="left-arrow" [class.d-none]="leftArrowNone" (click)="scrollToLeft()">
+    <app-feather-icons [icon]="'arrow-left'"></app-feather-icons>
+  </div>
+  <div id="sidebar-menu">
+    <ul class="sidebar-links custom-scrollbar">
+      <li class="back-btn">
+        <a [routerLink]="['/dashboard/home']">
+          <!-- <app-img [styles]="{ 'width': '33px', 'height': '33px', 'object-fit': 'contain' }"
+            src="assets/images/logo/logo1.png" alt="E"></app-img> -->
+        </a>
+        <div class="mobile-back text-right" (click)="sidebarToggle()">
+          <span>Back</span><i class="fa fa-angle-right pl-2" aria-hidden="true"></i>
+        </div>
+      </li>
+
+      <li class="sidebar-list" *ngFor="let menuItem of menuItems" [ngClass]="{active: menuItem?.active}">
+        <!-- Submenu -->
+        <a href="javascript:void(0)" class="sidebar-link sidebar-title" *ngIf="menuItem?.type === 'sub'"
+          (click)="toggletNavActive(menuItem)" [ngClass]="{active: menuItem?.active}">
+          <app-feather-icons [icon]="menuItem?.icon"></app-feather-icons>
+          <span class="lan-3">{{menuItem?.title}}</span>
+          <div class="according-menu">
+            <i class="fa fa-angle-{{menuItem?.active ? 'down' : 'right'}}"></i>
+          </div>
+        </a>
+
+        <!-- Link -->
+        <a [routerLink]="[menuItem?.path]" routerLinkActive="active" class="sidebar-link sidebar-title link-nav"
+          *ngIf="menuItem?.type === 'link'" [ngClass]="{active: menuItem?.active}">
+          <app-feather-icons [icon]="menuItem?.icon"></app-feather-icons>
+          <span>{{menuItem?.title}}</span>
+        </a>
+
+        <!-- Children -->
+        <ul class="sidebar-submenu" [ngClass]="{active: menuItem?.active}" *ngIf="menuItem?.children"
+          [style.display]="menuItem?.active ? 'block' : 'none'">
+          <li *ngFor="let childrenItem of menuItem?.children" [ngClass]="{active: childrenItem.active}">
+            <a [routerLink]="[childrenItem.path]" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+              {{childrenItem.title}}
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="right-arrow" id="right-arrow" [class.d-none]="rightArrowNone" (click)="scrollToRight()">
+    <app-feather-icons [icon]="'arrow-right'"></app-feather-icons>
+  </div>
+</nav>
+<div class="sidebar-bottom-actions" style="padding: 20px; border-top: 1px solid rgba(255,255,255,0.05);">
+  <a (click)="logout()" class="btn btn-premium w-100 d-flex justify-content-center align-items-center"
+    href="javascript:void(0)">
+    <app-feather-icons [icon]="'log-out'" style="width: 18px; height: 18px; margin-right: 8px;"></app-feather-icons>
+    <span>Logout</span>
+  </a>
+</div>

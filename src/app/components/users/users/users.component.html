@@ -1,0 +1,186 @@
+<app-breadcrumb [title]="'Users'" [items]="['Dashboard']" [active_item]="'Users'" icon="users"></app-breadcrumb>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-12 btnPadding">
+      <div class="card card-premium">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5>All Users</h5>
+          <!-- <button class="btn btn-premium btn-sm" (click)="open('add')">
+            <i class="fa fa-user-plus"></i> Add User
+          </button> -->
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-sm-6 d-flex justify-content-start align-items-center mb-4">
+              <div class="search-premium w-100">
+                <i class="fa fa-search"></i>
+                <input type="text" [(ngModel)]="searchInput" placeholder="Search users..." class="w-100" />
+              </div>
+            </div>
+            <div class="col-sm-12 mb-4">
+              <div class="table-premium-container table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Id</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Email</th>
+                      <th scope="col">Role</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngIf="
+                        (users | filter : searchInput)?.length;
+                        else noData
+                      ">
+                      <tr *ngFor="
+                          let i = index;
+                          let item;
+                          of: users
+                            | filter : searchInput
+                            | paginate
+                              : {
+                                  itemsPerPage: 5,
+                                  currentPage: duePage,
+                                  totalItems: total
+                                }
+                        ">
+                        <th scope="row">{{ item?.id }}</th>
+                        <td>{{ item?.name}} {{item?.lname}}</td>
+                        <td>{{ item?.email ? item?.email : "N/A" }}</td>
+                        <td>{{ item?.role === '1' ? 'Admin' : 'User' }}</td>
+                        <td>
+                          <div class="toggle d-flex align-items-center w-100 justify-content-center">
+                            <input (change)="stateItem(item, $event)" class="checkBox" type="checkbox" [checked]="
+                                item?.status == '1' ? true : false
+                              " [id]="'user' + i" /><label [for]="'user' + i"></label>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="btn-group">
+                            <button class="btn btn-glass btn-sm" placement="top"
+                              (click)="selectedUser = item; open('edit')" title="Edit User">
+                              <i class="fa fa-edit text-primary"></i>
+                            </button>
+                            <button class="btn btn-glass btn-sm ms-2" (click)="userDetail(item?.id)"
+                              title="User Profile">
+                              <i class="fa fa-share text-info"></i>
+                            </button>
+                            <button class="btn btn-glass btn-sm ms-2" (click)="deleteUser(item?.id)"
+                              title="Delete User">
+                              <i class="fa fa-trash text-danger"></i>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    </ng-container>
+                    <ng-template #noData>
+                      <tr *ngIf="users?.length">
+                        <td colspan="6" class="text-center white">
+                          No Matching Data Available
+                        </td>
+                      </tr>
+                    </ng-template>
+                    <tr *ngIf="!users?.length">
+                      <td class="text-center white" colspan="6">
+                        No data available
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="col-sm-12 d-flex justify-content-end mt-4" *ngIf="users?.length">
+              <pagination-controls (pageChange)="duePage = $event">
+              </pagination-controls>
+            </div>
+          </div>
+        </div>
+        <!-- Container-fluid Ends-->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Side Drawer -->
+<div class="side-drawer" [class.open]="isDrawerOpen">
+  <div class="drawer-header d-flex justify-content-between align-items-center">
+    <h3>{{state ? 'Edit User' : 'Add User'}}</h3>
+    <button class="btn-close" (click)="proceed()"></button>
+  </div>
+  <div class="drawer-body custom-scrollbar">
+    <form [formGroup]="editForm" class="form">
+      <div class="row">
+        <div class="col-lg-12 mb-3">
+          <label>Name</label>
+          <input formControlName="name" type="text" placeholder="Name" class="form-control" />
+          <div
+            *ngIf="editForm.controls.name.invalid && (editForm.controls.name.dirty || editForm.controls.name.touched)">
+            <small class="text-danger">Name is required</small>
+          </div>
+        </div>
+
+
+        <div class="col-lg-12 mb-3">
+          <label>Email</label>
+          <input disabled="disabled" formControlName="email" type="text" placeholder="Email" class="form-control" />
+          <div
+            *ngIf="editForm.controls.email.invalid && (editForm.controls.email.dirty || editForm.controls.email.touched)">
+            <small class="text-danger">Email is required</small>
+          </div>
+        </div>
+
+
+        <div class="col-lg-12 mb-3">
+          <label>Phone</label>
+          <input formControlName="phone_number" type="text" placeholder="Phone" class="form-control" />
+          <div
+            *ngIf="editForm.controls.phone_number.invalid && (editForm.controls.phone_number.dirty || editForm.controls.phone_number.touched)">
+            <small class="text-danger">Phone is required</small>
+          </div>
+        </div>
+
+        <div class="col-lg-12 mb-3 position-relative">
+          <label>Password</label>
+          <div class="input-group">
+            <input class="form-control" placeholder="Password" [type]="show ? 'text' : 'password'"
+              formControlName="password" />
+            <span class="input-group-text cursor-pointer" (click)="showPassword()">
+              <i class="fa" [class.fa-eye]="!show" [class.fa-eye-slash]="show"></i>
+            </span>
+          </div>
+          <div
+            *ngIf="editForm.controls.password.invalid && (editForm.controls.password.dirty || editForm.controls.password.touched)">
+            <small class="text-danger">Password is required</small>
+          </div>
+        </div>
+
+        <div class="col-lg-12 mb-3">
+          <label>User Image</label>
+          <div class="image-upload-wrapper">
+            <input type="file" id="imageInput" (change)="onImageSelected($event)" class="d-none" />
+            <label for="imageInput" class="upload-btn">
+              <i class="fas fa-camera"></i> Change Photo
+            </label>
+            <div class="preview-img" *ngIf="editForm.get('image').value">
+              <img [src]="editForm.get('image').value" alt="user" />
+            </div>
+          </div>
+          <div
+            *ngIf="editForm.controls.image.invalid && (editForm.controls.image.dirty || editForm.controls.image.touched)">
+            <small class="text-danger">Image is required</small>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="drawer-footer">
+    <button class="btn btn-primary w-100 mb-2" (click)="save(true)">Save Changes</button>
+    <button class="btn btn-outline-secondary w-100" (click)="proceed()">Cancel</button>
+  </div>
+</div>
+
+<div class="drawer-backdrop" *ngIf="isDrawerOpen" (click)="proceed()"></div>
