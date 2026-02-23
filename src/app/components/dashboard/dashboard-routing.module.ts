@@ -8,6 +8,7 @@ import { CategoriesComponent } from "./categories/categories.component";
 
 import { MusicComponent } from "./music/music.component";
 import { SubscriptionsComponent } from "./subscriptions/subscriptions.component";
+import { DailyEnergyFlowComponent } from "./daily-energy-flow/daily-energy-flow.component";
 
 const routes: Routes = [
   {
@@ -24,6 +25,11 @@ const routes: Routes = [
       {
         path: "setting",
         component: SettingsComponent,
+      },
+
+      {
+        path: "daily-energy-flow",
+        component: DailyEnergyFlowComponent,
       },
       {
         path: "events",

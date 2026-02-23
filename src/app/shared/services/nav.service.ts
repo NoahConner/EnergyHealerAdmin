@@ -95,6 +95,13 @@ export class NavService implements OnDestroy {
     },
     { path: "/dashboard/music", icon: "music", title: "Music", type: "link" },
     {
+      path: "/dashboard/daily-energy-flow",
+      icon: "plus-circle",
+      title: "Daily Energy Flow",
+      type: "link",
+    },
+
+    {
       path: "/dashboard/subscriptions",
       icon: "users",
       title: "Subscriptions",

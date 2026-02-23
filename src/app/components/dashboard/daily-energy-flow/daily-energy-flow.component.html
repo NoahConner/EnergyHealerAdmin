@@ -1,0 +1,195 @@
+<app-breadcrumb [items]="['Dashboard']" [active_item]="'Daily Energy Flow'" icon="activity">
+</app-breadcrumb>
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="card flow-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4>Create Daily Energy Flow</h4>
+                        <small class="text-muted">Curate today’s guided experience with a clear intention and
+                            audio.</small>
+                    </div>
+                    <button class="btn btn-flow-save" (click)="saveDailyFlow()">
+                        <i class="fa fa-save me-1"></i> Save Flow
+                    </button>
+                </div>
+
+                <div class="card-body">
+                    <!-- Form -->
+                    <form [formGroup]="dailyFlowForm" novalidate>
+                        <div class="mb-4">
+                            <label class="form-label">Heading</label>
+                            <input type="text" class="form-control" formControlName="heading"
+                                placeholder="e.g. Heart-Centered Morning Reset">
+                            <div *ngIf="f['heading'].invalid && (f['heading'].dirty || f['heading'].touched)">
+                                <small class="text-danger" *ngIf="f['heading'].errors?.['required']">Heading is
+                                    required.</small>
+                                <small class="text-danger" *ngIf="f['heading'].errors?.['maxlength']">Heading is too
+                                    long.</small>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Description</label>
+                            <textarea rows="5" class="form-control" formControlName="description"
+                                placeholder="Describe the intention and focus of this flow."></textarea>
+                            <div
+                                *ngIf="f['description'].invalid && (f['description'].dirty || f['description'].touched)">
+                                <small class="text-danger" *ngIf="f['description'].errors?.['required']">Description is
+                                    required.</small>
+                                <small class="text-danger" *ngIf="f['description'].errors?.['maxlength']">Description is
+                                    too long.</small>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Audio Card -->
+                    <div class="audio-card mt-4">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div>
+                                <h6 class="mb-1">Attach Audio</h6>
+                                <small class="text-muted">Select one or more audios for this flow</small>
+                            </div>
+                        </div>
+
+                        <!-- Select from gallery button -->
+                        <button class="btn btn-outline-flow w-100 mb-3" (click)="openGallery()">
+                            <i class="fa fa-headphones me-2"></i> Select Audio From Gallery
+                        </button>
+
+                        <!-- Selected audios -->
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small text-muted">Selected Audios</span>
+                            <span class="badge bg-light text-dark small" *ngIf="selectedGalleryItems.length">
+                                {{ selectedGalleryItems.length }}
+                            </span>
+                        </div>
+
+                        <div *ngIf="selectedGalleryItems.length; else noSelected" class="uploaded-list">
+                            <div class="uploaded-item" *ngFor="let track of selectedGalleryItems"
+                                [class.playing]="isPlaying(track)">
+                                <div class="audio-row">
+                                    <div class="thumb-wrapper">
+                                        <ng-container *ngIf="track.artwork; else noArtwork">
+                                            <img [src]="track.artwork" [alt]="track.title">
+                                        </ng-container>
+                                        <ng-template #noArtwork>
+                                            <div class="icon-circle"><i class="fa fa-music"></i></div>
+                                        </ng-template>
+                                    </div>
+
+                                    <div class="audio-meta">
+                                        <div class="audio-title text-truncate" [title]="track.title">{{ track.title }}
+                                        </div>
+                                        <div class="audio-sub">
+                                            <span class="text-truncate" *ngIf="track.artist">{{ track.artist }}</span>
+                                            <span class="dot" *ngIf="track.artist && track.duration">•</span>
+                                            <span class="duration-pill" *ngIf="track.duration">{{ track.duration
+                                                }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="audio-actions">
+                                        <button type="button" class="btn-icon" (click)="togglePreview(track, $event)"
+                                            [attr.aria-label]="'Preview ' + track.title">
+                                            <i class="fa" [ngClass]="isPlaying(track) ? 'fa-pause' : 'fa-play'"></i>
+                                        </button>
+                                        <button type="button" class="btn-icon btn-icon-danger"
+                                            (click)="removeFromSelection(track.id)" aria-label="Remove">
+                                            <i class="fa fa-times"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <ng-template #noSelected>
+                            <div class="text-center text-muted py-3">
+                                No audio selected yet. Open the gallery and choose tracks.
+                            </div>
+                        </ng-template>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="audio-modal-backdrop" *ngIf="isGalleryOpen">
+    <div class="audio-modal">
+        <div class="audio-modal-header d-flex justify-content-between align-items-center">
+            <div>
+                <h5>Audio Gallery</h5>
+                <small class="text-muted">Pick tracks to attach to this flow</small>
+            </div>
+            <button type="button" class="btn-close" (click)="closeGallery()"></button>
+        </div>
+
+        <div class="audio-modal-body">
+            <div *ngIf="isGalleryLoading" class="text-center py-4 text-muted">
+                <i class="fa fa-spinner fa-spin me-2"></i> Loading audios...
+            </div>
+
+            <div *ngIf="!isGalleryLoading && galleryError" class="text-center py-4 text-danger">
+                {{ galleryError }}
+            </div>
+
+            <ng-container *ngIf="!isGalleryLoading && !galleryError">
+                <div class="search-bar mb-3">
+                    <i class="fa fa-search"></i>
+                    <input type="text" [(ngModel)]="gallerySearch" (ngModelChange)="galleryPage = 1"
+                        placeholder="Search audio...">
+                </div>
+
+                <div *ngIf="!(galleryItems | filter: gallerySearch)?.length" class="text-center py-3 text-muted">
+                    No matching audios found.
+                </div>
+
+                <div class="gallery-item"
+                    *ngFor="let item of galleryItems | filter: gallerySearch | paginate: { itemsPerPage: 10, currentPage: galleryPage }"
+                    [class.active]="isSelected(item)" [class.playing]="isPlaying(item)"
+                    (click)="selectFromGallery(item)">
+                    <div class="audio-row">
+                        <div class="thumb-wrapper">
+                            <ng-container *ngIf="item.artwork; else noArtworkModal">
+                                <img [src]="item.artwork" [alt]="item.title">
+                            </ng-container>
+                            <ng-template #noArtworkModal>
+                                <div class="icon-circle"><i class="fa fa-music"></i></div>
+                            </ng-template>
+                        </div>
+
+                        <div class="audio-meta">
+                            <div class="audio-title text-truncate" [title]="item.title">{{ item.title }}</div>
+                            <div class="audio-sub">
+                                <span class="text-truncate" *ngIf="item.artist">{{ item.artist }}</span>
+                                <span class="dot" *ngIf="item.artist && item.duration">•</span>
+                                <span class="duration-pill" *ngIf="item.duration">{{ item.duration }}</span>
+                            </div>
+                        </div>
+
+                        <div class="audio-actions">
+                            <button type="button" class="btn-icon" (click)="togglePreview(item, $event)"
+                                [attr.aria-label]="'Preview ' + item.title">
+                                <i class="fa" [ngClass]="isPlaying(item) ? 'fa-pause' : 'fa-play'"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end mt-2"
+                    *ngIf="(galleryItems | filter: gallerySearch)?.length > 10">
+                    <pagination-controls (pageChange)="galleryPage = $event"></pagination-controls>
+                </div>
+            </ng-container>
+        </div>
+
+        <div class="audio-modal-footer d-flex justify-content-between align-items-center">
+            <small class="text-muted">Static preview only.</small>
+            <button type="button" class="btn btn-flow-save btn-sm" (click)="closeGallery()">Use Selection</button>
+        </div>
+    </div>
+</div>

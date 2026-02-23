@@ -16,6 +16,7 @@ import { EventsComponent } from "./events/events.component";
 import { CategoriesComponent } from "./categories/categories.component";
 import { MusicComponent } from "./music/music.component";
 import { SubscriptionsComponent } from "./subscriptions/subscriptions.component";
+import { DailyEnergyFlowComponent } from './daily-energy-flow/daily-energy-flow.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { SubscriptionsComponent } from "./subscriptions/subscriptions.component"
     CategoriesComponent,
     MusicComponent,
     SubscriptionsComponent,
+    DailyEnergyFlowComponent,
   ],
   imports: [
     CommonModule,
