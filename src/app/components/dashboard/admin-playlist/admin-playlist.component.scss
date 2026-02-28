@@ -1,0 +1,9 @@
+.playlist-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+@import '../music/music.component.scss';
+@import '../daily-energy-flow/daily-energy-flow.component.scss';

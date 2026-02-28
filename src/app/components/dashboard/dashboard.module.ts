@@ -15,6 +15,7 @@ import { FlatpickrModule } from "angularx-flatpickr";
 import { EventsComponent } from "./events/events.component";
 import { CategoriesComponent } from "./categories/categories.component";
 import { MusicComponent } from "./music/music.component";
+import { AdminPlaylistComponent } from "./admin-playlist/admin-playlist.component";
 import { SubscriptionsComponent } from "./subscriptions/subscriptions.component";
 import { DailyEnergyFlowComponent } from './daily-energy-flow/daily-energy-flow.component';
 
@@ -26,6 +27,7 @@ import { DailyEnergyFlowComponent } from './daily-energy-flow/daily-energy-flow.
     EventsComponent,
     CategoriesComponent,
     MusicComponent,
+    AdminPlaylistComponent,
     SubscriptionsComponent,
     DailyEnergyFlowComponent,
   ],

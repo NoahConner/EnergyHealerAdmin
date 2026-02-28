@@ -7,6 +7,7 @@ import { EventsComponent } from "./events/events.component";
 import { CategoriesComponent } from "./categories/categories.component";
 
 import { MusicComponent } from "./music/music.component";
+import { AdminPlaylistComponent } from "./admin-playlist/admin-playlist.component";
 import { SubscriptionsComponent } from "./subscriptions/subscriptions.component";
 import { DailyEnergyFlowComponent } from "./daily-energy-flow/daily-energy-flow.component";
 
@@ -43,6 +44,10 @@ const routes: Routes = [
       {
         path: "music",
         component: MusicComponent,
+      },
+      {
+        path: "admin-playlist",
+        component: AdminPlaylistComponent,
       },
       {
         path: "subscriptions",
