@@ -1,0 +1,110 @@
+<app-breadcrumb [title]="'Custom Healings'" [items]="['Dashboard']" [active_item]="'Custom Healings'"
+  icon="clock"></app-breadcrumb>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-12 btnPadding">
+      <div class="card card-premium">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5>All Custom Healings</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-sm-6 d-flex justify-content-start align-items-center">
+              <div class="searchField mt-1 w-100">
+                <input type="text" [(ngModel)]="searchInput" placeholder="Search" class="w-100 white" />
+                <i class="fa fa-search"></i>
+              </div>
+            </div>
+            <div class="col-sm-12">
+              <div class="order-history table-responsive wishlist">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Id</th>
+                      <th scope="col">Username</th>
+                      <th scope="col">Question</th>
+                      <th scope="col">Answer</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container *ngIf="
+                        (healings | filter : searchInput)?.length;
+                        else noData
+                      ">
+                      <tr *ngFor="
+                          let i = index;
+                          let item;
+                          of: healings
+                            | filter : searchInput
+                            | paginate
+                              : {
+                                  itemsPerPage: 5,
+                                  currentPage: duePage,
+                                  totalItems: total
+                                }
+                        ">
+                        <th scope="row">{{ item?.id }}</th>
+                        <td>{{ item?.user?.name}}</td>
+                        <td>{{ item?.message}}</td>
+                        <td>{{ item?.answer ?? 'No answer provided'}}</td>
+                        <td>{{ item?.status}}</td>
+                        <td>
+                          <button class="btn btn-sm btn-primary" [disabled]="item?.answer" (click)="openAnswer(item)">
+                            {{ item?.answer ? 'Completed' : 'Answer' }}
+                          </button>
+                        </td>
+                      </tr>
+                    </ng-container>
+                    <ng-template #noData>
+                      <tr *ngIf="healings?.length">
+                        <td colspan="5" class="text-center white">
+                          No Matching Data Available
+                        </td>
+                      </tr>
+                    </ng-template>
+                    <tr *ngIf="!healings?.length">
+                      <td class="text-center white" colspan="5">
+                        No data available
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="col-sm-12 d-flex justify-content-end" *ngIf="healings?.length">
+              <pagination-controls (pageChange)="duePage = $event">
+              </pagination-controls>
+            </div>
+          </div>
+        </div>
+        <!-- Container-fluid Ends-->
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="side-drawer" [class.open]="isDrawerOpen">
+  <div class="drawer-header d-flex justify-content-between align-items-center">
+    <h3>{{ selectedHealing?.message }}</h3>
+    <button class="btn-close" (click)="proceed()"></button>
+  </div>
+  <div class="drawer-body custom-scrollbar">
+    <form [formGroup]="editForm" class="form">
+      <div class="row">
+        <div class="col-12">
+          <label>Answer</label>
+          <textarea class="form-control" rows="4" formControlName="answer" placeholder="Write answer here"></textarea>
+        </div>
+
+      </div>
+    </form>
+  </div>
+  <div class="drawer-footer">
+    <button class="btn btn-primary w-100 mb-2" (click)="saveAnswer()">
+      Save Changes</button>
+  </div>
+</div>
+
+<div class="drawer-backdrop" *ngIf="isDrawerOpen" (click)="proceed()"></div>

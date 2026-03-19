@@ -102,6 +102,21 @@ export class NavService implements OnDestroy {
       type: "link",
     },
 
+
+          {
+        path: "/dashboard/custom-reminder",
+        icon: "clock",
+        title: "Custom Reminder",
+        type: "link",
+      },
+
+              {
+      path: "/dashboard/custom-healing",
+      icon: "activity",
+      title: "Custom Healings",
+      type: "link",
+    },
+
     {
       path: "/dashboard/subscriptions",
       icon: "users",
@@ -114,6 +129,43 @@ export class NavService implements OnDestroy {
       title: "Notifications",
       type: "link",
     },
+
+     {
+      path: "/dashboard/terms-condition",
+      icon: "sliders",
+      title: "Terms And Condition",
+      type: "link",
+    },
+    {
+      path: "/dashboard/privacy-policy",
+      icon: "shield",
+      title: "Privacy Policy",
+      type: "link",
+    },
+
+
+    {
+      path: "/dashboard/refund-policy",
+      icon: "refresh-cw",
+      title: "Refund Policy",
+      type: "link",
+    },
+
+    {
+      path: "/dashboard/faqs",
+      icon: "help-circle",
+      title: "FAQs",
+      type: "link",
+    },
+    {
+      path: "/dashboard/help",
+      icon: "help-circle",
+      title: "Help & Support",
+      type: "link",
+    },
+
+
+
   ];
 
   MEGAMENUITEMS: Menu[] = [

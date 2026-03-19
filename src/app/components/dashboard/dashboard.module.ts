@@ -18,6 +18,13 @@ import { MusicComponent } from "./music/music.component";
 import { AdminPlaylistComponent } from "./admin-playlist/admin-playlist.component";
 import { SubscriptionsComponent } from "./subscriptions/subscriptions.component";
 import { DailyEnergyFlowComponent } from './daily-energy-flow/daily-energy-flow.component';
+import { TermConditionComponent } from './term-condition/term-condition.component';
+import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
+import { RefundPolicyComponent } from './refund-policy/refund-policy.component';
+import { HelpComponent } from './help/help.component';
+import { CustomReminderComponent } from './custom-reminder/custom-reminder.component';
+import { FaqsComponent } from './faqs/faqs.component';
+import { CustomHealingComponent } from './custom-healing/custom-healing.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +37,13 @@ import { DailyEnergyFlowComponent } from './daily-energy-flow/daily-energy-flow.
     AdminPlaylistComponent,
     SubscriptionsComponent,
     DailyEnergyFlowComponent,
+    TermConditionComponent,
+    PrivacyPolicyComponent,
+    RefundPolicyComponent,
+    HelpComponent,
+    CustomReminderComponent,
+    FaqsComponent,
+    CustomHealingComponent,
   ],
   imports: [
     CommonModule,

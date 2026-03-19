@@ -26,6 +26,7 @@ export class CategoriesComponent implements OnInit {
         this.editForm = this.fb.group({
             name: [null, Validators.required],
             image: [null, Validators.required],
+            symbol: [null],
             status: [1],
         });
     }
@@ -47,12 +48,13 @@ export class CategoriesComponent implements OnInit {
         this.isDrawerOpen = true;
         this.state = state === 'edit';
         if (this.state) {
-            const { id, name, image, status } = this.selectedCategory || {};
+            const { id, name, image, symbol, status } = this.selectedCategory || {};
             if (!this.editForm.contains('id')) {
                 this.editForm.addControl('id', new FormControl(id));
             }
             this.editForm.patchValue({
                 name,
+                symbol,
                 image,
                 status,
             });

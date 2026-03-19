@@ -1,0 +1,101 @@
+<app-breadcrumb
+  [title]="'Helps'"
+  [items]="['Dashboard']"
+  [active_item]="'Helps'"
+  icon="help-circle"
+></app-breadcrumb>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-12 btnPadding">
+      <div class="card card-premium">
+                <div class="card-header d-flex justify-content-between align-items-center">
+          <h5>All Help</h5>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div
+              class="col-sm-6 d-flex justify-content-start align-items-center"
+            >
+              <div class="searchField mt-1 w-100">
+                <input
+                  type="text"
+                  [(ngModel)]="searchInput"
+                  placeholder="Search"
+                  class="w-100 white"
+                />
+                <i class="fa fa-search"></i>
+              </div>
+            </div>
+            <div class="col-sm-12">
+              <div class="order-history table-responsive wishlist">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Id</th>
+                      <th scope="col">User Name</th>
+                      <th scope="col">Description</th>
+                      <th scope="col">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container
+                      *ngIf="
+                        (helps | filter : searchInput)?.length;
+                        else noData
+                      "
+                    >
+                      <tr
+                        *ngFor="
+                          let i = index;
+                          let item;
+                          of: helps
+                            | filter : searchInput
+                            | paginate
+                              : {
+                                  itemsPerPage: 5,
+                                  currentPage: duePage,
+                                  totalItems: total
+                                }
+                        "
+                      >
+                        <th scope="row">{{ item?.id }}</th> 
+                        <td>{{ item?.email}}</td>
+                        <td><span [ngbTooltip]="item?.message" placement="top" class="pointer">{{ item?.message | slice:0:50 }}</span></td>
+                        <td  >
+                          <button class="btn btn-danger" (click)="confirmBox(item)">
+                            <i class="fa fa-trash"></i>
+                          </button>
+                      </td>
+                      </tr>
+                    </ng-container>
+                    <ng-template #noData>
+                      <tr *ngIf="helps?.length">
+                        <td colspan="4" class="text-center white">
+                          No Matching Data Available
+                        </td>
+                      </tr>
+                    </ng-template>
+                    <tr *ngIf="!helps?.length">
+                      <td class="text-center white" colspan="4">
+                        No data available
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div
+              class="col-sm-12 d-flex justify-content-end"
+              *ngIf="helps?.length"
+            >
+              <pagination-controls (pageChange)="duePage = $event">
+              </pagination-controls>
+            </div>
+          </div>
+        </div>
+        <!-- Container-fluid Ends-->
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -1,0 +1,27 @@
+<app-breadcrumb [title]="'Terms And Condition'" [items]="['Dashboard']" [active_item]="'Terms And Condition'" icon="clipboard">
+</app-breadcrumb>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-12">
+      <form [formGroup]="termsForm" class="form">
+        <ckeditor 
+          [editor]="Editor" 
+          formControlName="description" 
+         >
+        </ckeditor>
+        <div *ngIf="
+                termsForm.controls.description.invalid &&
+                (termsForm.controls.description.dirty ||
+                  termsForm.controls.description.touched)
+              ">
+          <small class="text-danger">Content is required</small>
+        </div>
+      </form>
+    </div>
+    <div class="col-sm-3 mt-3 ml-auto">
+      <button  class="btn btn-primary btn-block" [disabled]="!termsForm.valid" (click)="save()" type="button">
+        <span>Save</span>
+      </button>
+    </div>
+  </div>
+</div>

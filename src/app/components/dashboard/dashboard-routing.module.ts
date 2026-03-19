@@ -10,6 +10,13 @@ import { MusicComponent } from "./music/music.component";
 import { AdminPlaylistComponent } from "./admin-playlist/admin-playlist.component";
 import { SubscriptionsComponent } from "./subscriptions/subscriptions.component";
 import { DailyEnergyFlowComponent } from "./daily-energy-flow/daily-energy-flow.component";
+import { TermConditionComponent } from "./term-condition/term-condition.component";
+import { PrivacyPolicyComponent } from "./privacy-policy/privacy-policy.component";
+import { RefundPolicyComponent } from "./refund-policy/refund-policy.component";
+import { HelpComponent } from "./help/help.component";
+import { CustomReminderComponent } from "./custom-reminder/custom-reminder.component";
+import { FaqsComponent } from "./faqs/faqs.component";
+import { CustomHealingComponent } from "./custom-healing/custom-healing.component";
 
 const routes: Routes = [
   {
@@ -52,6 +59,36 @@ const routes: Routes = [
       {
         path: "subscriptions",
         component: SubscriptionsComponent,
+      },
+      {
+        path: "terms-condition",
+        component: TermConditionComponent,
+      },
+      {
+        path: "privacy-policy",
+        component: PrivacyPolicyComponent,
+      },
+      {
+        path: "refund-policy",
+        component: RefundPolicyComponent,
+      },
+      {
+        path: "help",
+        component: HelpComponent,
+      },
+      {
+        path: "custom-reminder",
+        component: CustomReminderComponent,
+      },
+
+      {
+        path: "faqs",
+        component: FaqsComponent
+      },
+
+      {
+        path: "custom-healing",
+        component: CustomHealingComponent
       },
       {
         path: "**",
