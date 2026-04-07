@@ -17,6 +17,7 @@ import { HelpComponent } from "./help/help.component";
 import { CustomReminderComponent } from "./custom-reminder/custom-reminder.component";
 import { FaqsComponent } from "./faqs/faqs.component";
 import { CustomHealingComponent } from "./custom-healing/custom-healing.component";
+import { QuizComponent } from "./quiz/quiz.component";
 
 const routes: Routes = [
   {
@@ -89,6 +90,11 @@ const routes: Routes = [
       {
         path: "custom-healing",
         component: CustomHealingComponent
+      },
+
+            {
+        path: "quiz",
+        component: QuizComponent
       },
       {
         path: "**",

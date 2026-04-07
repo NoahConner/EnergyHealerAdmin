@@ -1,0 +1,116 @@
+<app-breadcrumb [title]="'Admin Quiz'" [items]="['Dashboard']" [active_item]="'Admin Quiz'" icon="list"></app-breadcrumb>
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-12 btnPadding">
+      <div class="card card-premium">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5>Admin Quizzes</h5>
+          <button class="btn btn-premium btn-sm" (click)="openDrawer('add')">
+            <i class="fa fa-plus"></i> Add Quiz
+          </button>
+        </div>
+
+        <div class="card-body">
+          <div class="row mb-4">
+            <div class="col-sm-6 d-flex justify-content-start align-items-center mb-4">
+              <div class="search-premium w-100">
+                <i class="fa fa-search"></i>
+                <input type="text" [(ngModel)]="searchInput" placeholder="Search quiz..." class="w-100" />
+              </div>
+            </div>
+          </div>
+
+          <div class="table-premium-container table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Title</th>
+                  <th>Questions</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngIf="(quizzes | filter : searchInput)?.length; else noData">
+                  <tr *ngFor="let quiz of quizzes | filter : searchInput; let i = index">
+                    <th>{{ quiz.id }}</th>
+                    <td>{{ quiz.title }}</td>
+                    <td>{{ quiz.questions.length }}</td>
+                    <td>
+                      <div class="btn-group">
+                        <button class="btn btn-glass btn-sm" (click)="editQuiz(quiz)" title="Edit">
+                          <i class="fa fa-edit text-primary"></i>
+                        </button>
+                        <button class="btn btn-glass btn-sm ms-2" (click)="deleteQuiz(quiz.id)" title="Delete">
+                          <i class="fa fa-trash text-danger"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </ng-container>
+
+                <ng-template #noData>
+                  <tr>
+                    <td colspan="4" class="text-center text-muted">No matching data available</td>
+                  </tr>
+                </ng-template>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Drawer -->
+<div class="side-drawer" [class.open]="isDrawerOpen">
+  <div class="drawer-header d-flex justify-content-between align-items-center">
+    <h3>{{ isEditing ? 'Edit Quiz' : 'Add Quiz' }}</h3>
+    <button class="btn-close" (click)="closeDrawer()"></button>
+  </div>
+
+  <div class="drawer-body custom-scrollbar">
+    <form [formGroup]="quizForm">
+      <div class="mb-3">
+        <label>Quiz Title</label>
+        <input formControlName="title" type="text" class="form-control" placeholder="Quiz Title">
+      </div>
+
+      <div class="questions-container">
+        <div class="question-card mb-3" *ngFor="let q of quizForm.get('questions')['controls']; let qi=index">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6>Question {{ qi + 1 }}</h6>
+            <button type="button" class="btn btn-sm btn-danger" (click)="removeQuestion(qi)">Remove</button>
+          </div>
+
+          <input [formControlName]="'question_text'" placeholder="Question Text" class="form-control mb-2">
+          <select [formControlName]="'type'" class="form-select mb-2">
+            <option value="single">Single</option>
+            <option value="multi">Multiple</option>
+          </select>
+
+          <div class="options-container mb-2">
+            <div class="option-row mb-1" *ngFor="let opt of q.get('options')['controls']; let oi=index">
+              <input [formControlName]="'label'" placeholder="Option Label" class="form-control mb-1">
+              <input [formControlName]="'option_key'" placeholder="Option Key" class="form-control mb-1">
+              <input [formControlName]="'next_question_key'" placeholder="Next Question Key / Result Key" class="form-control mb-1">
+              <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeOption(qi, oi)">Remove</button>
+            </div>
+            <button type="button" class="btn btn-sm btn-secondary mt-2" (click)="addOption(qi)">Add Option</button>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-sm btn-primary mb-3" (click)="addQuestion()">Add Question</button>
+    </form>
+  </div>
+
+  <div class="drawer-footer">
+    <button class="btn btn-primary w-100 mb-2" (click)="saveQuiz()">Save Quiz</button>
+    <button class="btn btn-outline-secondary w-100" (click)="closeDrawer()">Cancel</button>
+  </div>
+</div>
+
+<div class="drawer-backdrop" *ngIf="isDrawerOpen" (click)="closeDrawer()"></div>

@@ -19,6 +19,9 @@
     font-size: 18px;
 }
 
-div#sidebar-menu {
-    height: 48.5rem;
+.sidebar-main {
+    display: flex !important;
+    flex-direction: column !important;
+    height: calc(100vh - 120px) !important; 
+    position: relative !important;
 }

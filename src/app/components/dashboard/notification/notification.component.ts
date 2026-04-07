@@ -112,4 +112,6 @@ export class NotificationComponent {
   isAllUsersSelected() {
     return this.users?.length > 0 && this.users.every((user) => user.checked);
   }
+
+  
 }

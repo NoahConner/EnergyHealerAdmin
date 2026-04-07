@@ -25,6 +25,7 @@ import { HelpComponent } from './help/help.component';
 import { CustomReminderComponent } from './custom-reminder/custom-reminder.component';
 import { FaqsComponent } from './faqs/faqs.component';
 import { CustomHealingComponent } from './custom-healing/custom-healing.component';
+import { QuizComponent } from './quiz/quiz.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { CustomHealingComponent } from './custom-healing/custom-healing.componen
     CustomReminderComponent,
     FaqsComponent,
     CustomHealingComponent,
+    QuizComponent,
   ],
   imports: [
     CommonModule,

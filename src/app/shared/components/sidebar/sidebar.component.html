@@ -60,14 +60,14 @@
       </li>
     </ul>
   </div>
-  <div class="right-arrow" id="right-arrow" [class.d-none]="rightArrowNone" (click)="scrollToRight()">
-    <app-feather-icons [icon]="'arrow-right'"></app-feather-icons>
-  </div>
-</nav>
-<div class="sidebar-bottom-actions" style="padding: 20px; border-top: 1px solid rgba(255,255,255,0.05);">
+  <div class="sidebar-bottom-actions" style="padding: 20px; border-top: 1px solid rgba(255,255,255,0.05);">
   <a (click)="logout()" class="btn btn-premium w-100 d-flex justify-content-center align-items-center"
     href="javascript:void(0)">
     <app-feather-icons [icon]="'log-out'" style="width: 18px; height: 18px; margin-right: 8px;"></app-feather-icons>
     <span>Logout</span>
   </a>
 </div>
+  <div class="right-arrow" id="right-arrow" [class.d-none]="rightArrowNone" (click)="scrollToRight()">
+    <app-feather-icons [icon]="'arrow-right'"></app-feather-icons>
+  </div>
+</nav>

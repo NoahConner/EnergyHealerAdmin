@@ -117,6 +117,13 @@ export class NavService implements OnDestroy {
       type: "link",
     },
 
+                  {
+      path: "/dashboard/quiz",
+      icon: "activity",
+      title: "Quiz",
+      type: "link",
+    },
+
     {
       path: "/dashboard/subscriptions",
       icon: "users",
