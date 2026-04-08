@@ -1,0 +1,86 @@
+<app-breadcrumb
+  [title]="'Quiz Results'"
+  [items]="['Dashboard', 'Quiz']"
+  [active_item]="'Quiz Results'"
+  icon="layers">
+</app-breadcrumb>
+
+<div class="container-fluid py-4">
+  <div class="results-shell">
+    <div class="results-topbar">
+      <div>
+        <h3>{{ quiz?.title || 'Quiz Results Generator' }}</h3>
+        <p class="text-muted mb-0">Send this quiz JSON for AI outcome generation and review each possible outcome as a card.</p>
+      </div>
+      <div class="results-actions">
+        <button type="button" class="btn btn-outline-light" (click)="backToQuizList()">Back</button>
+        <button type="button" class="btn btn-primary" [disabled]="!quiz || isGenerating" (click)="generateOutcomes()">
+          <i class="fa" [ngClass]="isGenerating ? 'fa-spinner fa-spin' : 'fa-magic'"></i>
+          <span class="ms-2">{{ isGenerating ? 'Generating...' : 'Generate Outcomes' }}</span>
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="isLoading" class="state-card">
+      <i class="fa fa-spinner fa-spin me-2"></i> Loading quiz...
+    </div>
+
+    <div *ngIf="!isLoading && errorMessage" class="state-card error-card">
+      {{ errorMessage }}
+    </div>
+
+    <ng-container *ngIf="!isLoading && quiz">
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <div class="panel-card">
+            <div class="panel-header">
+              <h5>Quiz JSON</h5>
+              <span class="badge-soft">{{ quiz?.questions?.length || 0 }} questions</span>
+            </div>
+            <pre class="json-block">{{ quiz | json }}</pre>
+          </div>
+        </div>
+
+        <div class="col-lg-7">
+          <div class="panel-card">
+            <div class="panel-header">
+              <h5>Possible Outcomes</h5>
+              <span class="badge-soft" *ngIf="outcomes.length">{{ outcomes.length }} cards</span>
+            </div>
+
+            <div class="state-card mb-3" *ngIf="usedFallback">
+              Grok API response nahi mili, is liye abhi fallback outcome generation dikhaya ja raha hai.
+            </div>
+
+            <div class="state-card" *ngIf="!outcomes.length && !isGenerating">
+              Generate Outcomes press karen taake har possible result alag card mein nazar aaye.
+            </div>
+
+            <div class="outcomes-grid" *ngIf="outcomes.length">
+              <div class="outcome-card" *ngFor="let outcome of outcomes">
+                <div class="outcome-top">
+                  <span class="outcome-group">{{ outcome.result_group }}</span>
+                  <span class="outcome-source" [class.is-fallback]="outcome.source === 'fallback'">
+                    {{ outcome.source === 'grok' ? 'Grok' : 'Fallback' }}
+                  </span>
+                </div>
+
+                <h6>{{ outcome.title }}</h6>
+                <p *ngIf="outcome.summary">{{ outcome.summary }}</p>
+
+                <div class="path-list" *ngIf="outcome.path?.length">
+                  <div class="path-item" *ngFor="let step of outcome.path">
+                    <div class="path-question">{{ step.questionText }}</div>
+                    <div class="path-answer">{{ step.optionLabel }} ({{ step.optionKey }})</div>
+                  </div>
+                </div>
+
+                <div class="result-key">result_key: {{ outcome.result_key }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>

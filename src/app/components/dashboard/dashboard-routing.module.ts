@@ -18,6 +18,8 @@ import { CustomReminderComponent } from "./custom-reminder/custom-reminder.compo
 import { FaqsComponent } from "./faqs/faqs.component";
 import { CustomHealingComponent } from "./custom-healing/custom-healing.component";
 import { QuizComponent } from "./quiz/quiz.component";
+import { QuizCreateComponent } from "./quiz/quiz-create/quiz-create.component";
+import { QuizResultsComponent } from "./quiz/quiz-results/quiz-results.component";
 
 const routes: Routes = [
   {
@@ -95,6 +97,14 @@ const routes: Routes = [
             {
         path: "quiz",
         component: QuizComponent
+      },
+      {
+        path: "quiz/create",
+        component: QuizCreateComponent
+      },
+      {
+        path: "quiz/results/:id",
+        component: QuizResultsComponent
       },
       {
         path: "**",

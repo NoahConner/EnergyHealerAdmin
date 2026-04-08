@@ -26,6 +26,8 @@ import { CustomReminderComponent } from './custom-reminder/custom-reminder.compo
 import { FaqsComponent } from './faqs/faqs.component';
 import { CustomHealingComponent } from './custom-healing/custom-healing.component';
 import { QuizComponent } from './quiz/quiz.component';
+import { QuizCreateComponent } from './quiz/quiz-create/quiz-create.component';
+import { QuizResultsComponent } from './quiz/quiz-results/quiz-results.component';
 
 @NgModule({
   declarations: [
@@ -46,6 +48,8 @@ import { QuizComponent } from './quiz/quiz.component';
     FaqsComponent,
     CustomHealingComponent,
     QuizComponent,
+    QuizCreateComponent,
+    QuizResultsComponent,
   ],
   imports: [
     CommonModule,

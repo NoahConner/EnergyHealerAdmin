@@ -1,0 +1,198 @@
+<app-breadcrumb
+  [title]="'Create Quiz'"
+  [items]="['Dashboard', 'Quiz']"
+  [active_item]="'Create Quiz'"
+  icon="list">
+</app-breadcrumb>
+
+<div class="container-fluid">
+  <div class="card card-premium">
+    <div class="card-body" [formGroup]="quizForm">
+      <div class="title-section mb-5">
+        <div class="section-header title-header">
+          <div class="section-heading">
+            <i class="fas fa-pencil-alt"></i>
+            <h3 class="section-title">Quiz Details</h3>
+          </div>
+          <div class="title-actions">
+            <button type="button" class="btn btn-outline-light view-quiz-btn" (click)="openQuizPreview()">
+              <span>View Quiz</span>
+            </button>
+            <button class="btn btn-primary save-quiz-btn" (click)="save()">
+              <span>Save Quiz</span>
+            </button>
+          </div>
+        </div>
+        <div class="title-input-wrapper">
+          <input formControlName="title"
+                 class="form-control premium-input"
+                 placeholder="Enter your quiz title here...">
+        </div>
+      </div>
+
+      <div class="questions-section">
+        <div class="section-header mb-4">
+          <i class="fas fa-question-circle"></i>
+          <h3 class="section-title">Nested Quiz Flow</h3>
+          <span class="question-count-badge">{{ questions.length }} Root</span>
+        </div>
+
+        <div class="possibility-empty" *ngIf="!questions.length">
+          Start with your main question, then add options and nested follow-up questions under each option.
+        </div>
+
+        <div formArrayName="questions" *ngIf="questions.length">
+          <ng-container *ngFor="let question of questions.controls; let qi = index">
+            <ng-container *ngTemplateOutlet="questionTemplate; context: { $implicit: question, level: 0, rootIndex: qi }"></ng-container>
+          </ng-container>
+        </div>
+
+        <button class="btn-add-question mt-3" (click)="addRootQuestion()">
+          <i class="fas fa-plus-circle"></i>
+          <span>{{ questions.length ? 'Add Another Root Question' : 'Add Main Question' }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #questionTemplate let-question let-level="level" let-rootIndex="rootIndex">
+  <div class="question-card premium-card mb-4 nested-question-card" [style.marginLeft.px]="level * 22" [formGroup]="question">
+    <div class="card-header-premium">
+      <div class="question-number">
+        <span class="number-circle">{{ level + 1 }}</span>
+        <span class="question-label">{{ level === 0 ? 'Main Question' : 'Nested Question' }}</span>
+      </div>
+      <button class="btn-remove" *ngIf="level === 0" (click)="removeRootQuestion(rootIndex)">
+        <i class="fas fa-trash-alt"></i>
+        <span>Remove</span>
+      </button>
+    </div>
+
+    <div class="card-body-premium">
+      <div class="question-input-wrapper mb-4">
+        <label class="premium-label">
+          <i class="fas fa-edit"></i>
+          Question Text
+        </label>
+        <input formControlName="question_text"
+               class="form-control premium-input"
+               placeholder="Type your question here...">
+      </div>
+
+      <div class="options-section">
+        <label class="premium-label mb-3">
+          <i class="fas fa-list-ul"></i>
+          Answer Options
+        </label>
+
+        <div formArrayName="options">
+          <div class="options-container">
+            <ng-container *ngFor="let option of getOptions(question).controls; let oi = index">
+              <div class="option-item premium-option" [formGroupName]="oi">
+                <div class="option-number">{{ getAlphabetLabel(oi) }}</div>
+
+                <div class="option-fields option-fields-nested">
+                  <div class="field-group">
+                    <input formControlName="label"
+                           class="form-control premium-input-sm"
+                           placeholder="Option label">
+                  </div>
+                </div>
+
+                <div class="option-inline-actions">
+                  <button type="button" class="btn-add-inline" *ngIf="!hasChildQuestion(option)" (click)="addChildQuestion(option)">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Add Question</span>
+                  </button>
+                  <button type="button" class="btn-add-inline btn-inline-danger" *ngIf="hasChildQuestion(option)" (click)="removeChildQuestion(option)">
+                    <i class="fas fa-trash-alt"></i>
+                    <span>Remove Question</span>
+                  </button>
+                  <button type="button" class="btn-option-remove" (click)="removeOption(question, oi)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="nested-branch" *ngIf="hasChildQuestion(option)">
+                <div class="nested-branch-label">
+                  <span>{{ option.get('label')?.value || ('Option ' + getAlphabetLabel(oi)) }}</span>
+                  <small>follow-up question</small>
+                </div>
+                <ng-container *ngTemplateOutlet="questionTemplate; context: { $implicit: getChildQuestion(option), level: level + 1, rootIndex: rootIndex }"></ng-container>
+              </div>
+            </ng-container>
+          </div>
+
+          <button class="btn-add-option" type="button" (click)="addOption(question)">
+            <i class="fas fa-plus-circle"></i>
+            <span>Add Option</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<div class="audio-modal-backdrop" *ngIf="isQuizPreviewOpen">
+  <div class="audio-modal quiz-preview-modal">
+    <div class="audio-modal-header d-flex justify-content-between align-items-center">
+      <div>
+        <h5>{{ previewQuiz?.title || 'Quiz Preview' }}</h5>
+        <small class="text-muted" *ngIf="previewQuestion">Play the quiz exactly like a user flow</small>
+        <small class="text-muted" *ngIf="previewResult">Final result reached</small>
+      </div>
+      <button type="button" class="btn-close" (click)="closeQuizPreview()"></button>
+    </div>
+
+    <div class="audio-modal-body">
+      <div *ngIf="isQuizPreviewLoading" class="text-center py-4 text-muted">
+        <i class="fa fa-spinner fa-spin me-2"></i> Loading quiz...
+      </div>
+
+      <div *ngIf="quizPreviewError" class="preview-note mb-3">
+        {{ quizPreviewError }}
+      </div>
+
+      <ng-container *ngIf="!isQuizPreviewLoading && previewQuestion">
+        <div class="preview-question-card">
+          <div class="preview-step-badge">{{ previewTrail.length + 1 }}</div>
+          <h4>{{ previewQuestion.question_text }}</h4>
+          <div class="preview-options">
+            <button type="button"
+                    class="preview-option-btn"
+                    *ngFor="let option of previewQuestion.options"
+                    (click)="answerPreview(option)">
+              <span class="preview-option-key">{{ option.option_key }}</span>
+              <span>{{ option.label }}</span>
+            </button>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="!isQuizPreviewLoading && previewResult">
+        <div class="preview-result-card">
+          <div class="preview-result-pill">{{ previewResult.result_group || 'result' }}</div>
+          <h4>{{ previewResult.title }}</h4>
+          <p *ngIf="previewResult.summary">{{ previewResult.summary }}</p>
+
+          <div class="path-steps mb-4" *ngIf="previewTrail.length">
+            <div class="path-step" *ngFor="let step of previewTrail">
+              <div class="path-question">{{ step.questionText }}</div>
+              <div class="path-answer">{{ step.optionLabel }} ({{ step.optionKey }})</div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="audio-modal-footer d-flex justify-content-between align-items-center">
+      <small class="text-muted">Preview fetches quiz data from GET API, then simulates the user flow here.</small>
+      <div class="title-actions">
+        <button type="button" class="btn btn-outline-light btn-sm" (click)="restartQuizPreview()">Restart</button>
+        <button type="button" class="btn btn-primary btn-sm" (click)="closeQuizPreview()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

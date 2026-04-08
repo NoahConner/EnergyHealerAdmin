@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { HttpService } from '../../../shared/services/http.service';
 
 @Component({
@@ -8,107 +8,68 @@ import { HttpService } from '../../../shared/services/http.service';
   styleUrls: ['./quiz.component.scss']
 })
 export class QuizComponent implements OnInit {
-  quizzes = []; // fetch from backend
-  searchInput = '';
-  isDrawerOpen = false;
-  isEditing = false;
-  quizForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private http: HttpService) {}
+  quizzes: any[] = [];
+  searchInput: string = '';
+  duePage!: number;
+  total!: number;
+  constructor(
+    private http: HttpService,
+    private router: Router
+  ) {}
 
-  ngOnInit() {
-    this.quizForm = this.fb.group({
-      title: ['', Validators.required],
-      questions: this.fb.array([])
-    });
+  viewResults(quiz: any): void {
+    if (!quiz?.id) {
+      return;
+    }
 
-    this.fetchQuizzes();
+    this.router.navigate(['/admin/quiz/results', quiz.id]);
   }
 
-  get questions(): FormArray {
-    return this.quizForm.get('questions') as FormArray;
+  ngOnInit(): void {
+    this.getAllQuizzes();
   }
 
-  fetchQuizzes() {
-    // replace with your backend API
-    this.http.get('/api/quiz', true).subscribe((res: any) => {
-      this.quizzes = res.data;
-    });
+  async getAllQuizzes() {
+    try {
+      const res: any = await this.http.get('/quiz', true).toPromise();
+      const rawList =
+        res?.data?.data ??
+        res?.data ??
+        res?.quizzes ??
+        res?.quiz ??
+        [];
+
+      this.quizzes = Array.isArray(rawList)
+        ? rawList.map((quiz: any) => ({
+            ...quiz,
+            questions: this.normalizeQuestions(quiz?.questions)
+          }))
+        : [];
+
+      this.total = this.quizzes.length;
+    } catch (error) {
+      console.error('Error fetching quizzes:', error);
+      this.quizzes = [];
+      this.total = 0;
+    }
   }
 
-  openDrawer(mode: string) {
-    this.isEditing = mode === 'edit';
-    this.isDrawerOpen = true;
+  private normalizeQuestions(questions: any): any[] {
+    if (Array.isArray(questions)) {
+      return questions;
+    }
+
+    if (typeof questions === 'string') {
+      try {
+        const parsed = JSON.parse(questions);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        console.error('Error parsing quiz questions:', error);
+      }
+    }
+
+    return [];
   }
 
-  closeDrawer() {
-    this.isDrawerOpen = false;
-    this.quizForm.reset();
-    this.questions.clear();
-  }
-
-  addQuestion() {
-    const q = this.fb.group({
-      question_text: ['', Validators.required],
-      type: ['single', Validators.required],
-      options: this.fb.array([])
-    });
-    this.questions.push(q);
-  }
-
-  removeQuestion(index: number) {
-    this.questions.removeAt(index);
-  }
-
-  addOption(qIndex: number) {
-    const options = this.questions.at(qIndex).get('options') as FormArray;
-    const opt = this.fb.group({
-      label: ['', Validators.required],
-      option_key: ['', Validators.required],
-      next_question_key: ['']
-    });
-    options.push(opt);
-  }
-
-  removeOption(qIndex: number, oIndex: number) {
-    const options = this.questions.at(qIndex).get('options') as FormArray;
-    options.removeAt(oIndex);
-  }
-
-  editQuiz(quiz) {
-    this.isEditing = true;
-    this.isDrawerOpen = true;
-    this.quizForm.patchValue({ title: quiz.title });
-    this.questions.clear();
-
-    quiz.questions.forEach(q => {
-      const questionGroup = this.fb.group({
-        question_text: [q.question_text, Validators.required],
-        type: [q.type, Validators.required],
-        options: this.fb.array([])
-      });
-
-      const optionsArray = questionGroup.get('options') as FormArray;
-      q.options.forEach(opt => optionsArray.push(this.fb.group(opt)));
-
-      this.questions.push(questionGroup);
-    });
-  }
-
-  saveQuiz() {
-    // if (this.quizForm.invalid) return;
-
-    const payload = this.quizForm.value;
-    this.http.post('/api/quiz/create', payload, true).subscribe((res) => {
-      console.log(res);
-      this.closeDrawer();
-      this.fetchQuizzes();
-    });
-  }
-
-  // deleteQuiz(id: number) {
-  //   this.http.delete(`/api/quiz/${id}`).subscribe(() => {
-  //     this.fetchQuizzes();
-  //   });
-  // }
 }
