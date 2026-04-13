@@ -15,9 +15,6 @@
             <h3 class="section-title">Quiz Details</h3>
           </div>
           <div class="title-actions">
-            <button type="button" class="btn btn-outline-light view-quiz-btn" (click)="openQuizPreview()">
-              <span>View Quiz</span>
-            </button>
             <button class="btn btn-primary save-quiz-btn" (click)="save()">
               <span>Save Quiz</span>
             </button>
@@ -135,64 +132,4 @@
   </div>
 </ng-template>
 
-<div class="audio-modal-backdrop" *ngIf="isQuizPreviewOpen">
-  <div class="audio-modal quiz-preview-modal">
-    <div class="audio-modal-header d-flex justify-content-between align-items-center">
-      <div>
-        <h5>{{ previewQuiz?.title || 'Quiz Preview' }}</h5>
-        <small class="text-muted" *ngIf="previewQuestion">Play the quiz exactly like a user flow</small>
-        <small class="text-muted" *ngIf="previewResult">Final result reached</small>
-      </div>
-      <button type="button" class="btn-close" (click)="closeQuizPreview()"></button>
-    </div>
 
-    <div class="audio-modal-body">
-      <div *ngIf="isQuizPreviewLoading" class="text-center py-4 text-muted">
-        <i class="fa fa-spinner fa-spin me-2"></i> Loading quiz...
-      </div>
-
-      <div *ngIf="quizPreviewError" class="preview-note mb-3">
-        {{ quizPreviewError }}
-      </div>
-
-      <ng-container *ngIf="!isQuizPreviewLoading && previewQuestion">
-        <div class="preview-question-card">
-          <div class="preview-step-badge">{{ previewTrail.length + 1 }}</div>
-          <h4>{{ previewQuestion.question_text }}</h4>
-          <div class="preview-options">
-            <button type="button"
-                    class="preview-option-btn"
-                    *ngFor="let option of previewQuestion.options"
-                    (click)="answerPreview(option)">
-              <span class="preview-option-key">{{ option.option_key }}</span>
-              <span>{{ option.label }}</span>
-            </button>
-          </div>
-        </div>
-      </ng-container>
-
-      <ng-container *ngIf="!isQuizPreviewLoading && previewResult">
-        <div class="preview-result-card">
-          <div class="preview-result-pill">{{ previewResult.result_group || 'result' }}</div>
-          <h4>{{ previewResult.title }}</h4>
-          <p *ngIf="previewResult.summary">{{ previewResult.summary }}</p>
-
-          <div class="path-steps mb-4" *ngIf="previewTrail.length">
-            <div class="path-step" *ngFor="let step of previewTrail">
-              <div class="path-question">{{ step.questionText }}</div>
-              <div class="path-answer">{{ step.optionLabel }} ({{ step.optionKey }})</div>
-            </div>
-          </div>
-        </div>
-      </ng-container>
-    </div>
-
-    <div class="audio-modal-footer d-flex justify-content-between align-items-center">
-      <small class="text-muted">Preview fetches quiz data from GET API, then simulates the user flow here.</small>
-      <div class="title-actions">
-        <button type="button" class="btn btn-outline-light btn-sm" (click)="restartQuizPreview()">Restart</button>
-        <button type="button" class="btn btn-primary btn-sm" (click)="closeQuizPreview()">Close</button>
-      </div>
-    </div>
-  </div>
-</div>

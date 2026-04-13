@@ -53,26 +53,50 @@ export class QuizResultsComponent implements OnInit {
     this.loadQuiz();
   }
 
-  async loadQuiz(): Promise<void> {
-    this.isLoading = true;
-    this.errorMessage = null;
+async loadQuiz(): Promise<void> {
+  this.isLoading = true;
+  this.errorMessage = null;
 
-    try {
-      const res: any = await this.http.get('/get_all_quizzes', true).toPromise();
-      const quizzes = Array.isArray(res?.data) ? res.data : [];
-      this.quiz = quizzes.find((item: any) => Number(item.id) === this.quizId) || null;
+  try {
+    const res: any = await this.http.get(`/quiz/${this.quizId}`, true).toPromise();
 
-      if (!this.quiz) {
-        this.errorMessage = 'Quiz not found.';
-        return;
+    let data = res?.data?.data ?? res?.data ?? null;
+
+    if (data && !Array.isArray(data)) {
+      if (Number(data.id) === this.quizId) {
+        this.quiz = {
+          ...data,
+          questions: this.normalizeQuestions(data.questions)
+        };
+      } else {
+        this.quiz = null;
       }
+    }
+
+  } catch (error) {
+    console.error('Error loading quiz:', error);
+    this.errorMessage = 'Unable to load quiz.';
+  } finally {
+    this.isLoading = false;
+  }
+}
+
+private normalizeQuestions(questions: any): any[] {
+  if (Array.isArray(questions)) {
+    return questions;
+  }
+
+  if (typeof questions === 'string') {
+    try {
+      const parsed = JSON.parse(questions);
+      return Array.isArray(parsed) ? parsed : [];
     } catch (error) {
-      console.error('Error loading quiz:', error);
-      this.errorMessage = 'Unable to load quiz.';
-    } finally {
-      this.isLoading = false;
+      console.error('Error parsing questions:', error);
     }
   }
+
+  return [];
+}
 
   async generateOutcomes(): Promise<void> {
     if (!this.quiz) {
@@ -89,7 +113,7 @@ export class QuizResultsComponent implements OnInit {
         quiz: this.quiz
       };
 
-      const res: any = await this.http.post('/quiz/generate-results', payload, true).toPromise();
+      const res: any = await this.http.post('/quiz/generate-outcomes', payload, true).toPromise();
       const outcomes = res?.data?.outcomes || res?.outcomes || [];
 
       if (Array.isArray(outcomes) && outcomes.length) {

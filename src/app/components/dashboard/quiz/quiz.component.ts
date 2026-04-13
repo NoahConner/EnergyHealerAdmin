@@ -23,38 +23,41 @@ export class QuizComponent implements OnInit {
       return;
     }
 
-    this.router.navigate(['/admin/quiz/results', quiz.id]);
+    this.router.navigate(['/dashboard/quiz/results', quiz.id]);
   }
 
   ngOnInit(): void {
     this.getAllQuizzes();
   }
 
-  async getAllQuizzes() {
-    try {
-      const res: any = await this.http.get('/quiz', true).toPromise();
-      const rawList =
-        res?.data?.data ??
-        res?.data ??
-        res?.quizzes ??
-        res?.quiz ??
-        [];
+async getAllQuizzes() {
+  try {
+    const res: any = await this.http.get('/quiz', true).toPromise();
 
-      this.quizzes = Array.isArray(rawList)
-        ? rawList.map((quiz: any) => ({
-            ...quiz,
-            questions: this.normalizeQuestions(quiz?.questions)
-          }))
-        : [];
+    let rawList =
+      res?.data?.data ??
+      res?.data ??
+      res?.quizzes ??
+      res?.quiz ??
+      [];
 
-      this.total = this.quizzes.length;
-    } catch (error) {
-      console.error('Error fetching quizzes:', error);
-      this.quizzes = [];
-      this.total = 0;
+    if (!Array.isArray(rawList)) {
+      rawList = [rawList];
     }
-  }
 
+    this.quizzes = rawList.map((quiz: any) => ({
+      ...quiz,
+      questions: this.normalizeQuestions(quiz.questions)
+    }));
+
+    console.log('Formatted quiz list:', this.quizzes);
+
+  } catch (error) {
+    console.error('Error fetching quizzes:', error);
+    this.quizzes = [];
+    this.total = 0;
+  }
+}
   private normalizeQuestions(questions: any): any[] {
     if (Array.isArray(questions)) {
       return questions;

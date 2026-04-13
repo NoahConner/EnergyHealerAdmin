@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  baseUrl: "https://portal.energy4living.com.au/backend/api",
+  baseUrl: "http://localhost/energy4living_backend/api",
 };

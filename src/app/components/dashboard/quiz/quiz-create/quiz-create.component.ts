@@ -110,13 +110,6 @@ const DEFAULT_NESTED_QUIZ = {
 })
 export class QuizCreateComponent implements OnInit {
   quizForm: FormGroup;
-  isQuizPreviewOpen = false;
-  isQuizPreviewLoading = false;
-  quizPreviewError: string | null = null;
-  previewQuiz: { title: string; questions: QuizQuestion[]; results: PreviewQuizResult[] } | null = null;
-  previewQuestionKey: string | null = null;
-  previewResult: PreviewQuizResult | null = null;
-  previewTrail: PreviewTrailStep[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -146,15 +139,6 @@ export class QuizCreateComponent implements OnInit {
     return String.fromCharCode(65 + index);
   }
 
-  get previewQuestion(): QuizQuestion | null {
-    if (!this.previewQuiz?.questions?.length || !this.previewQuestionKey) {
-      return null;
-    }
-
-    return this.previewQuiz.questions.find(
-      (question) => question.question_key === this.previewQuestionKey
-    ) || null;
-  }
 
   hasChildQuestion(optionControl: AbstractControl): boolean {
     return optionControl.get('childQuestion') instanceof FormGroup;
@@ -208,78 +192,7 @@ export class QuizCreateComponent implements OnInit {
     });
   }
 
-  async openQuizPreview(): Promise<void> {
-    this.isQuizPreviewLoading = true;
-    this.quizPreviewError = null;
 
-    try {
-      const res: any = await this.http.get('/get_all_quizzes', true).toPromise();
-      const quizzes = Array.isArray(res?.data) ? res.data : [];
-      const formTitle = (this.quizForm.get('title')?.value || '').trim().toLowerCase();
-
-      const matchedQuiz = [...quizzes].reverse().find((quiz: any) => {
-        const title = String(quiz?.title || '').trim().toLowerCase();
-        return formTitle && title === formTitle;
-      }) || quizzes[quizzes.length - 1];
-
-      this.startQuizPreview(matchedQuiz || this.buildPreviewQuizFromForm());
-    } catch (error) {
-      console.error('Error fetching quiz preview:', error);
-      this.quizPreviewError = 'Unable to load quiz from API. Showing current draft preview instead.';
-      this.startQuizPreview(this.buildPreviewQuizFromForm());
-    } finally {
-      this.isQuizPreviewLoading = false;
-    }
-  }
-
-  closeQuizPreview(): void {
-    this.isQuizPreviewOpen = false;
-    this.previewQuiz = null;
-    this.previewQuestionKey = null;
-    this.previewResult = null;
-    this.previewTrail = [];
-  }
-
-  answerPreview(option: QuizOption): void {
-    const question = this.previewQuestion;
-
-    if (!question) {
-      return;
-    }
-
-    this.previewTrail = [
-      ...this.previewTrail,
-      {
-        questionKey: question.question_key,
-        questionText: question.question_text,
-        optionKey: option.option_key,
-        optionLabel: option.label
-      }
-    ];
-
-    if (option.next_question_key) {
-      this.previewQuestionKey = option.next_question_key;
-      return;
-    }
-
-    this.previewQuestionKey = null;
-    this.previewResult = {
-      result_key: option.option_key,
-      result_group: question.question_key,
-      title: option.label,
-      summary: ''
-    };
-  }
-
-  restartQuizPreview(): void {
-    if (!this.previewQuiz?.questions?.length) {
-      return;
-    }
-
-    this.previewQuestionKey = this.previewQuiz.questions[0].question_key;
-    this.previewResult = null;
-    this.previewTrail = [];
-  }
 
   save(): void {
     if (this.quizForm.invalid || !this.questions.length) {
@@ -366,30 +279,7 @@ export class QuizCreateComponent implements OnInit {
     };
   }
 
-  private buildPreviewQuizFromForm(): { title: string; questions: QuizQuestion[]; results: PreviewQuizResult[] } {
-    const payload = this.buildSavePayload();
-    return {
-      ...payload,
-      results: []
-    };
-  }
 
-  private startQuizPreview(quiz: any): void {
-    if (!quiz?.questions?.length) {
-      this.quizPreviewError = 'No quiz questions available for preview.';
-      return;
-    }
-
-    this.previewQuiz = {
-      title: quiz.title,
-      questions: quiz.questions,
-      results: Array.isArray(quiz.results) ? quiz.results : []
-    };
-    this.previewQuestionKey = quiz.questions[0].question_key;
-    this.previewResult = null;
-    this.previewTrail = [];
-    this.isQuizPreviewOpen = true;
-  }
 
   private buildOptionKey(label: string, index: number): string {
     const normalized = label
