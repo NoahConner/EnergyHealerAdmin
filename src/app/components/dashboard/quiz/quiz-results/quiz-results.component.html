@@ -49,13 +49,64 @@
 
 
             <div class="outcomes-grid" *ngIf="outcomes.length">
-              <div class="outcome-card" *ngFor="let outcome of outcomes">
+              <div class="outcome-card" *ngFor="let outcome of outcomes; let i = index">
                 <div class="outcome-top">
                   <span class="outcome-group">{{ outcome.result_group }}</span>
                 </div>
 
                 <h6>{{ outcome.title }}</h6>
                 <p *ngIf="outcome.summary">{{ outcome.summary }}</p>
+
+                <div class="audio-card mt-3">
+                  <button type="button" class="btn btn-outline-flow w-100 mb-3" (click)="openAudioGallery(outcome)">
+                    <i class="fa fa-headphones me-2"></i>
+                    {{ outcome.selectedAudios?.length ? 'Add/Remove Audio From Gallery' : 'Select Audio From Gallery' }}
+                  </button>
+
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="small text-muted">Selected Audios</span>
+                    <span class="badge bg-light text-dark small" *ngIf="outcome.selectedAudios?.length">
+                      {{ outcome.selectedAudios.length }}
+                    </span>
+                  </div>
+
+                  <div *ngIf="outcome.selectedAudios?.length; else noSelectedAudio" class="uploaded-list">
+                    <div class="uploaded-item" *ngFor="let track of outcome.selectedAudios">
+                      <div class="audio-row">
+                        <div class="thumb-wrapper">
+                          <ng-container *ngIf="track.artwork; else noOutcomeArtwork">
+                            <img [src]="track.artwork" [alt]="track.title" />
+                          </ng-container>
+                          <ng-template #noOutcomeArtwork>
+                            <div class="icon-circle"><i class="fa fa-music"></i></div>
+                          </ng-template>
+                        </div>
+                        <div class="audio-meta">
+                          <div class="audio-title text-truncate" [title]="track.title">{{ track.title }}</div>
+                          <div class="audio-sub">
+                            <span class="text-truncate" *ngIf="track.artist">{{ track.artist }}</span>
+                            <span class="dot" *ngIf="track.artist && track.duration">•</span>
+                            <span class="duration-pill" *ngIf="track.duration">{{ track.duration }}</span>
+                          </div>
+                          <audio controls class="w-100 mt-2">
+                            <source [src]="track.url" />
+                          </audio>
+                        </div>
+                        <div class="audio-actions">
+                          <button type="button" class="btn-icon btn-icon-danger" (click)="removeOutcomeAudio(outcome, track.id)" aria-label="Remove">
+                            <i class="fa fa-times"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <ng-template #noSelectedAudio>
+                    <div class="text-center text-muted py-2 small">
+                      No audio selected yet.
+                    </div>
+                  </ng-template>
+                </div>
 
                 <div class="path-list" *ngIf="outcome.path?.length">
                   <div class="path-item" *ngFor="let step of outcome.path">
@@ -71,5 +122,85 @@
         </div>
       </div>
     </ng-container>
+  </div>
+</div>
+
+<!-- Audio Gallery Modal -->
+<div class="audio-modal-backdrop" *ngIf="isAudioGalleryOpen">
+  <div class="audio-modal">
+    <div class="audio-modal-header d-flex justify-content-between align-items-center">
+      <div>
+        <h5>Audio Gallery</h5>
+        <small class="text-muted">Pick one audio for this outcome</small>
+      </div>
+      <button type="button" class="btn-close" (click)="closeAudioGallery()"></button>
+    </div>
+
+    <div class="audio-modal-body">
+      <div *ngIf="isAudioGalleryLoading" class="text-center py-4 text-muted">
+        <i class="fa fa-spinner fa-spin me-2"></i> Loading audios...
+      </div>
+
+      <div *ngIf="!isAudioGalleryLoading && audioGalleryError" class="text-center py-4 text-danger">
+        {{ audioGalleryError }}
+      </div>
+
+      <ng-container *ngIf="!isAudioGalleryLoading && !audioGalleryError">
+        <div class="search-bar mb-3">
+          <i class="fa fa-search"></i>
+          <input
+            type="text"
+            [(ngModel)]="audioGallerySearch"
+            (ngModelChange)="audioGalleryPage = 1"
+            placeholder="Search audio..."
+          />
+        </div>
+
+        <div *ngIf="!(audioGalleryItems | filter : audioGallerySearch)?.length" class="text-center py-3 text-muted">
+          No matching audios found.
+        </div>
+
+        <div
+          class="gallery-item"
+          *ngFor="let item of audioGalleryItems | filter : audioGallerySearch | paginate : { itemsPerPage: 10, currentPage: audioGalleryPage }"
+          [class.active]="isSelectedFromAudioGallery(item)"
+          [class.playing]="isPlaying(item)"
+          (click)="selectFromAudioGallery(item)"
+        >
+          <div class="audio-row">
+            <div class="thumb-wrapper">
+              <ng-container *ngIf="item.artwork; else noArtworkModal">
+                <img [src]="item.artwork" [alt]="item.title" />
+              </ng-container>
+              <ng-template #noArtworkModal>
+                <div class="icon-circle"><i class="fa fa-music"></i></div>
+              </ng-template>
+            </div>
+            <div class="audio-meta">
+              <div class="audio-title text-truncate" [title]="item.title">{{ item.title }}</div>
+              <div class="audio-sub">
+                <span class="text-truncate" *ngIf="item.artist">{{ item.artist }}</span>
+                <span class="dot" *ngIf="item.artist && item.duration">•</span>
+                <span class="duration-pill" *ngIf="item.duration">{{ item.duration }}</span>
+              </div>
+            </div>
+            <div class="audio-actions">
+              <button type="button" class="btn-icon" (click)="togglePreview(item, $event)" [attr.aria-label]="'Preview ' + item.title">
+                <i class="fa" [ngClass]="isPlaying(item) ? 'fa-pause' : 'fa-play'"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-end mt-2" *ngIf="(audioGalleryItems | filter : audioGallerySearch)?.length > 10">
+          <pagination-controls (pageChange)="audioGalleryPage = $event"></pagination-controls>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="audio-modal-footer d-flex justify-content-between align-items-center">
+      <small class="text-muted">Static preview only.</small>
+      <button type="button" class="btn btn-flow-save btn-sm" (click)="closeAudioGallery()">Use Selection</button>
+    </div>
   </div>
 </div>
