@@ -17,6 +17,14 @@
           <i class="fa" [ngClass]="isGenerating ? 'fa-spinner fa-spin' : 'fa-magic'"></i>
           <span class="ms-2">{{ isGenerating ? 'Generating...' : 'Generate Outcomes' }}</span>
         </button>
+        <button
+          type="button"
+          class="btn btn-success"
+          [disabled]="!outcomes.length || isSavingResults"
+          (click)="saveResults()">
+          <i class="fa" [ngClass]="isSavingResults ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+          <span class="ms-2">{{ isSavingResults ? 'Saving...' : (resultsSaved ? 'Saved' : 'Save Result') }}</span>
+        </button>
       </div>
     </div>
 
@@ -46,8 +54,6 @@
               <h5>Possible Outcomes</h5>
               <span class="badge-soft" *ngIf="outcomes.length">{{ outcomes.length }} cards</span>
             </div>
-
-
             <div class="outcomes-grid" *ngIf="outcomes.length">
               <div class="outcome-card" *ngFor="let outcome of outcomes; let i = index">
                 <div class="outcome-top">

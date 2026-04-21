@@ -48,6 +48,8 @@ export class QuizResultsComponent implements OnInit {
   quiz: any = null;
   isLoading = false;
   isGenerating = false;
+  isSavingResults = false;
+  resultsSaved = false;
   errorMessage: string | null = null;
   outcomes: GeneratedOutcome[] = [];
   usedFallback = false;
@@ -148,6 +150,7 @@ private normalizeQuestions(questions: any): any[] {
           path: Array.isArray(item.path) ? item.path : [],
           source: 'grok'
         }));
+        this.resultsSaved = false;
         return;
       }
 
@@ -156,6 +159,7 @@ private normalizeQuestions(questions: any): any[] {
       console.error('Error generating outcomes from API:', error);
       this.usedFallback = true;
       this.outcomes = this.buildFallbackOutcomes(this.quiz?.questions || []);
+      this.resultsSaved = false;
     } finally {
       this.isGenerating = false;
     }
@@ -260,6 +264,48 @@ private normalizeQuestions(questions: any): any[] {
 
   removeOutcomeAudio(outcome: GeneratedOutcome, id: number): void {
     outcome.selectedAudios = outcome.selectedAudios.filter((a) => a.id !== id);
+  }
+
+  async saveResults(): Promise<void> {
+    if (!this.quiz?.id) {
+      return;
+    }
+
+    const results = this.outcomes
+      .filter((outcome) => outcome.selectedAudios?.length)
+      .map((outcome) => ({
+        result_key: outcome.result_key,
+        playlists: outcome.selectedAudios.map((audio) => ({
+          url: audio.url,
+          artwork: audio.artwork,
+          title: audio.title,
+          artist: audio.artist,
+          duration: audio.duration
+        }))
+      }));
+
+    if (!results.length) {
+      this.errorMessage = 'Please select at least one audio before saving results.';
+      return;
+    }
+
+    this.isSavingResults = true;
+    this.errorMessage = null;
+
+    const payload = {
+      quiz_id: this.quiz.id,
+      results
+    };
+
+    try {
+      await this.http.post('/quiz/save-result', payload, true).toPromise();
+      this.resultsSaved = true;
+    } catch (error) {
+      console.error('Error saving quiz result:', error);
+      this.errorMessage = 'Unable to save quiz results.';
+    } finally {
+      this.isSavingResults = false;
+    }
   }
 
   backToQuizList(): void {
