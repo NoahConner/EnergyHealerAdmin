@@ -14,7 +14,7 @@ import { TermConditionComponent } from "./term-condition/term-condition.componen
 import { PrivacyPolicyComponent } from "./privacy-policy/privacy-policy.component";
 import { RefundPolicyComponent } from "./refund-policy/refund-policy.component";
 import { HelpComponent } from "./help/help.component";
-import { CustomReminderComponent } from "./custom-reminder/custom-reminder.component";
+// import { CustomReminderComponent } from "./custom-reminder/custom-reminder.component";
 import { FaqsComponent } from "./faqs/faqs.component";
 import { CustomHealingComponent } from "./custom-healing/custom-healing.component";
 import { QuizComponent } from "./quiz/quiz.component";
@@ -79,10 +79,10 @@ const routes: Routes = [
         path: "help",
         component: HelpComponent,
       },
-      {
-        path: "custom-reminder",
-        component: CustomReminderComponent,
-      },
+      // {
+      //   path: "custom-reminder",
+      //   component: CustomReminderComponent,
+      // },
 
       {
         path: "faqs",

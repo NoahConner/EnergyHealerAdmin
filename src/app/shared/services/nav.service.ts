@@ -103,12 +103,12 @@ export class NavService implements OnDestroy {
     },
 
 
-          {
-        path: "/dashboard/custom-reminder",
-        icon: "clock",
-        title: "Custom Reminder",
-        type: "link",
-      },
+      //     {
+      //   path: "/dashboard/custom-reminder",
+      //   icon: "clock",
+      //   title: "Custom Reminder",
+      //   type: "link",
+      // },
 
               {
       path: "/dashboard/custom-healing",
