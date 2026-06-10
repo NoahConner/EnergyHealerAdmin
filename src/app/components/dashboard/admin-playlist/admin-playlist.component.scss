@@ -5,5 +5,20 @@
     object-fit: cover;
 }
 
+.category-select {
+    min-height: 48px;
+    line-height: 1.4;
+    padding-right: 42px;
+    appearance: auto;
+}
+
+.category-placeholder {
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.category-select option {
+    color: #fff;
+}
+
 @import '../music/music.component.scss';
 @import '../daily-energy-flow/daily-energy-flow.component.scss';

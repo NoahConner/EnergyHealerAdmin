@@ -28,6 +28,7 @@
                                         <tr>
                                             <th scope="col">Id</th>
                                             <th scope="col">Name</th>
+                                            <th scope="col">Category</th>
                                             <th scope="col">Icon</th>
                                             <th scope="col">Audios</th>
                                             <th scope="col">Actions</th>
@@ -39,6 +40,7 @@
                                                 *ngFor="let item of playlists | filter : searchInput | paginate : { itemsPerPage: 5, currentPage: duePage, totalItems: total }; let i = index">
                                                 <th scope="row">{{ item?.id }}</th>
                                                 <td>{{ item?.name }}</td>
+                                                <td>{{ item?.category || item?.category_name || 'N/A' }}</td>
                                                 <td>
                                                     <img *ngIf="item?.icon" [src]="item.icon" alt="Icon"
                                                         class="playlist-icon">
@@ -66,13 +68,13 @@
                                         </ng-container>
                                         <ng-template #noData>
                                             <tr *ngIf="playlists?.length">
-                                                <td colspan="5" class="text-center white">
+                                                <td colspan="6" class="text-center white">
                                                     No Matching Data Available
                                                 </td>
                                             </tr>
                                         </ng-template>
                                         <tr *ngIf="!playlists?.length">
-                                            <td class="text-center white" colspan="5">
+                                            <td class="text-center white" colspan="6">
                                                 No data available
                                             </td>
                                         </tr>
@@ -106,6 +108,19 @@
                     <div
                         *ngIf="editForm.controls['name'].invalid && (editForm.controls['name'].dirty || editForm.controls['name'].touched)">
                         <small class="text-danger">Name is required</small>
+                    </div>
+                </div>
+
+                <div class="col-lg-12 mb-3">
+                    <label>Category</label>
+                    <select class="form-control category-select"
+                        [class.category-placeholder]="!editForm.get('category')?.value" formControlName="category">
+                        <option [ngValue]="null">Select Category</option>
+                        <option *ngFor="let category of playlistCategories" [value]="category">{{ category }}</option>
+                    </select>
+                    <div
+                        *ngIf="editForm.controls['category'].invalid && (editForm.controls['category'].dirty || editForm.controls['category'].touched)">
+                        <small class="text-danger">Category is required</small>
                     </div>
                 </div>
 

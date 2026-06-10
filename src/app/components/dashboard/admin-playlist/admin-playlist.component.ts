@@ -19,6 +19,15 @@ interface AudioGalleryItem {
   styleUrls: ['./admin-playlist.component.scss'],
 })
 export class AdminPlaylistComponent implements OnInit {
+  readonly playlistCategories: string[] = [
+    'Stress & Anxiety Be Gone',
+    'Nervous System Reset',
+    'Fatigue Renewal',
+    'Happy Brain',
+    'Depression',
+    'Addiction Free',
+  ];
+
   playlists: any[] = [];
   duePage!: number;
   total!: number;
@@ -47,6 +56,7 @@ export class AdminPlaylistComponent implements OnInit {
   ) {
     this.editForm = this.fb.group({
       name: [null, Validators.required],
+      category: [null, Validators.required],
       icon: [null, Validators.required],
       status: [1],
     });
@@ -73,12 +83,13 @@ export class AdminPlaylistComponent implements OnInit {
     this.state = state === 'edit';
 
     if (this.state && this.selectedPlaylist) {
-      const { id, name, icon, audios, status } = this.selectedPlaylist;
+      const { id, name, category, category_name, icon, audios, status } = this.selectedPlaylist;
       if (!this.editForm.contains('id')) {
         this.editForm.addControl('id', new FormControl(id));
       }
       this.editForm.patchValue({
         name,
+        category: category || category_name || null,
         icon,
         status,
       });
@@ -246,4 +257,3 @@ export class AdminPlaylistComponent implements OnInit {
     });
   }
 }
-
