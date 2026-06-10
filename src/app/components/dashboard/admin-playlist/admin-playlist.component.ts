@@ -20,12 +20,11 @@ interface AudioGalleryItem {
 })
 export class AdminPlaylistComponent implements OnInit {
   readonly playlistCategories: string[] = [
-    'Stress & Anxiety Be Gone',
-    'Nervous System Reset',
-    'Fatigue Renewal',
-    'Happy Brain',
-    'Depression',
-    'Addiction Free',
+    'DAILY PRACTICE',
+    'MIND & EMOTIONS',
+    'BODY & HEALING',
+    'VITALITY & TRANSFORMATION',
+    'SPIRITUAL & ENERGETIC'
   ];
 
   playlists: any[] = [];
@@ -56,6 +55,7 @@ export class AdminPlaylistComponent implements OnInit {
   ) {
     this.editForm = this.fb.group({
       name: [null, Validators.required],
+      description: [null],
       category: [null, Validators.required],
       icon: [null, Validators.required],
       status: [1],
@@ -83,26 +83,18 @@ export class AdminPlaylistComponent implements OnInit {
     this.state = state === 'edit';
 
     if (this.state && this.selectedPlaylist) {
-      const { id, name, category, category_name, icon, audios, status } = this.selectedPlaylist;
+      const { id, name, description, category, category_name, icon, audios, status } = this.selectedPlaylist;
       if (!this.editForm.contains('id')) {
         this.editForm.addControl('id', new FormControl(id));
       }
       this.editForm.patchValue({
         name,
+        description: description || null,
         category: category || category_name || null,
         icon,
         status,
       });
-      this.selectedAudios = Array.isArray(audios)
-        ? audios.map((a: any) => ({
-            id: a.id,
-            title: a.title,
-            url: a.url || a.file, 
-            artwork: a.artwork || null,
-            artist: a.artist ?? null,
-            duration: a.duration ? String(a.duration) : null,
-          }))
-        : [];
+      this.selectedAudios = this.normalizeSelectedAudios(audios);
     } else {
       this.selectedAudios = [];
     }
@@ -222,6 +214,7 @@ export class AdminPlaylistComponent implements OnInit {
     const formData = {
       ...this.editForm.value,
       audios: this.selectedAudios.map((track) => ({
+        id: track.id,
         title: track.title,
         file: track.url,
         artwork: track.artwork ?? '',
@@ -255,5 +248,29 @@ export class AdminPlaylistComponent implements OnInit {
         });
       }
     });
+  }
+
+  private normalizeSelectedAudios(audios: any): AudioGalleryItem[] {
+    const list = Array.isArray(audios) ? audios : audios ? [audios] : [];
+
+    return list
+      .map((audio: any, index: number) => {
+        const url = audio?.url || audio?.file || audio?.audio_url || audio?.voice_url;
+        const idValue = Number(audio?.id);
+
+        if (!url || !Number.isFinite(idValue)) {
+          return null;
+        }
+
+        return {
+          id: idValue,
+          title: audio?.title || audio?.name || `Audio ${index + 1}`,
+          url: String(url),
+          artwork: audio?.artwork || audio?.music_image || null,
+          artist: audio?.artist ?? null,
+          duration: audio?.duration ? String(audio.duration) : null,
+        } as AudioGalleryItem;
+      })
+      .filter(Boolean) as AudioGalleryItem[];
   }
 }
