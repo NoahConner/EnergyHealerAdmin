@@ -37,10 +37,16 @@ export class HelperService {
     });
   }
 
-  fileUploadHttp(event: any): Promise<string> {
+  fileUploadHttp(event: any): Promise<any> {
     return new Promise((resolve, reject) => {
+      const file = event.target.files[0];
+      if (!file) {
+        reject("No file selected");
+        return;
+      }
+
       const reader = new FileReader();
-      reader.readAsDataURL(event.target.files[0]);
+      reader.readAsDataURL(file);
       reader.onload = () => {
         const img = new Image();
         img.src = reader.result as string;
@@ -69,11 +75,18 @@ export class HelperService {
 
           if (ctx) {
             ctx.drawImage(img, 0, 0, width, height);
+            const supportedTypes = ["image/png", "image/jpeg", "image/webp"];
+            const outputType = supportedTypes.includes(file.type)
+              ? file.type
+              : "image/jpeg";
+            const extension = outputType.split("/")[1] || "jpg";
+            const outputFileName = file.name.replace(/\.[^/.]+$/, "") + "." + extension;
+
             canvas.toBlob(
               (blob) => {
                 if (blob) {
                   const formData = new FormData();
-                  formData.append("image", blob, "image.webp");
+                  formData.append("image", blob, outputFileName);
                   this.http.post("/upload-image", formData, true).subscribe(
                     (response: any) => {
                       resolve(response);
@@ -86,8 +99,8 @@ export class HelperService {
                   reject("Failed to process image");
                 }
               },
-              "image/webp",
-              0.8
+              outputType,
+              outputType === "image/png" ? undefined : 0.8
             );
           }
         };

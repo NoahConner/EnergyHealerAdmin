@@ -92,14 +92,20 @@ async loadQuiz(): Promise<void> {
           ...data,
           questions: this.normalizeQuestions(data.questions)
         };
+        this.outcomes = this.mapOutcomes(data.outcomes);
+        this.resultsSaved = this.outcomes.some((outcome) => outcome.selectedAudios.length > 0);
       } else {
         this.quiz = null;
+        this.outcomes = [];
+        this.resultsSaved = false;
       }
     }
 
   } catch (error) {
     console.error('Error loading quiz:', error);
     this.errorMessage = 'Unable to load quiz.';
+    this.outcomes = [];
+    this.resultsSaved = false;
   } finally {
     this.isLoading = false;
   }
@@ -141,15 +147,7 @@ private normalizeQuestions(questions: any): any[] {
       const outcomes = res?.data?.outcomes || res?.outcomes || [];
 
       if (Array.isArray(outcomes) && outcomes.length) {
-        this.outcomes = outcomes.map((item: any) => ({
-          title: item.title || item.name || item.result_key,
-          summary: item.summary || item.description || '',
-          result_key: item.result_key || item.key || 'result',
-          result_group: item.result_group || item.group || 'quiz',
-          selectedAudios: this.normalizeSelectedAudios(item),
-          path: Array.isArray(item.path) ? item.path : [],
-          source: 'grok'
-        }));
+        this.outcomes = this.mapOutcomes(outcomes);
         this.resultsSaved = false;
         return;
       }
@@ -276,6 +274,7 @@ private normalizeQuestions(questions: any): any[] {
       .map((outcome) => ({
         result_key: outcome.result_key,
         playlists: outcome.selectedAudios.map((audio) => ({
+          id: audio.id,
           url: audio.url,
           artwork: audio.artwork,
           title: audio.title,
@@ -312,8 +311,24 @@ private normalizeQuestions(questions: any): any[] {
     this.router.navigate(['/dashboard/quiz']);
   }
 
+  private mapOutcomes(outcomes: any): GeneratedOutcome[] {
+    if (!Array.isArray(outcomes)) {
+      return [];
+    }
+
+    return outcomes.map((item: any) => ({
+      title: item.title || item.name || item.result_key,
+      summary: item.summary || item.description || '',
+      result_key: item.result_key || item.key || 'result',
+      result_group: item.result_group || item.group || 'quiz',
+      selectedAudios: this.normalizeSelectedAudios(item),
+      path: Array.isArray(item.path) ? item.path : [],
+      source: 'grok'
+    }));
+  }
+
   private normalizeSelectedAudios(item: any): AudioGalleryItem[] {
-    const raw = item?.audios ?? item?.audio ?? item?.tracks ?? item?.selectedAudios ?? [];
+    const raw = item?.playlists ?? item?.audios ?? item?.audio ?? item?.tracks ?? item?.selectedAudios ?? [];
     const list = Array.isArray(raw) ? raw : raw ? [raw] : [];
 
     return list

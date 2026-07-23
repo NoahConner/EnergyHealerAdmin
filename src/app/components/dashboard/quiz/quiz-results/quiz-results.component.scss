@@ -23,6 +23,69 @@
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
+  align-items: center;
+}
+
+.action-btn {
+  min-height: 44px;
+  padding: 0.7rem 1.25rem;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1;
+  box-shadow: none;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+
+  i {
+    font-size: 0.9rem;
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.22);
+  }
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+}
+
+.action-btn-back {
+  min-width: 88px;
+  background: transparent;
+  color: #eef1fb;
+  border-color: rgba(255, 255, 255, 0.55);
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.75);
+  }
+}
+
+.action-btn-primary {
+  min-width: 190px;
+  background: linear-gradient(135deg, #a81ee6 0%, #e031c4 100%);
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #9617d0 0%, #c91faf 100%);
+  }
+}
+
+.action-btn-success {
+  min-width: 108px;
+  background: linear-gradient(135deg, #48a91f 0%, #63c81f 100%);
+  color: #fff;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #3c9319 0%, #56b41a 100%);
+  }
 }
 
 .panel-card {

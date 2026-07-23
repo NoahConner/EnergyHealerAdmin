@@ -30,7 +30,7 @@
             <label class="col-form-label">Email Address</label>
             <div class="input-with-icon">
               <i class="fa fa-envelope-o"></i>
-              <input class="form-control premium-input" type="email" placeholder="test@energy-healer.com"
+              <input class="form-control premium-input" type="email" 
                 formControlName="email">
             </div>
             <div *ngIf="loginForm.controls?.['email']?.touched && loginForm.controls?.['email']?.errors?.['required']"
@@ -47,7 +47,7 @@
             <label class="col-form-label">Password</label>
             <div class="input-with-icon position-relative">
               <i class="fa fa-lock"></i>
-              <input class="form-control premium-input" [type]="show ? 'text' : 'password'" placeholder="123456789"
+              <input class="form-control premium-input" [type]="show ? 'text' : 'password'" 
                 formControlName="password">
               <div class="show-hide-toggle" (click)="showPassword()">
                 <i class="fa" [ngClass]="show ? 'fa-eye-slash' : 'fa-eye'"></i>

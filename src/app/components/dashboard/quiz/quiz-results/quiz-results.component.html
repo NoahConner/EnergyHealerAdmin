@@ -12,18 +12,16 @@
         <h3>{{ quiz?.title || 'Quiz Results Generator' }}</h3>
       </div>
       <div class="results-actions">
-        <button type="button" class="btn btn-outline-light" (click)="backToQuizList()">Back</button>
-        <button type="button" class="btn btn-primary" [disabled]="!quiz || isGenerating" (click)="generateOutcomes()">
-          <i class="fa" [ngClass]="isGenerating ? 'fa-spinner fa-spin' : 'fa-magic'"></i>
-          <span class="ms-2">{{ isGenerating ? 'Generating...' : 'Generate Outcomes' }}</span>
+        <button type="button" class="btn action-btn action-btn-back" (click)="backToQuizList()">Back</button>
+        <button type="button" class="btn action-btn action-btn-primary" [disabled]="!quiz || isGenerating" (click)="generateOutcomes()">
+          <span>{{ isGenerating ? 'Generating...' : 'Generate Outcomes' }}</span>
         </button>
         <button
           type="button"
-          class="btn btn-success"
+          class="btn action-btn action-btn-success"
           [disabled]="!outcomes.length || isSavingResults"
           (click)="saveResults()">
-          <i class="fa" [ngClass]="isSavingResults ? 'fa-spinner fa-spin' : 'fa-save'"></i>
-          <span class="ms-2">{{ isSavingResults ? 'Saving...' : (resultsSaved ? 'Saved' : 'Save Result') }}</span>
+          <span>{{ isSavingResults ? 'Saving...' : (resultsSaved ? 'Saved' : 'Save Result') }}</span>
         </button>
       </div>
     </div>

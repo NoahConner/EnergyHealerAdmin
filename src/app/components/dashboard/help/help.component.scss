@@ -1,4 +1,177 @@
-/* Add this to your styles.css or styles.scss file */
-.modal-content {
-  background-color: #ca26d9; /* Set the desired background color */
+// /* Add this to your styles.css or styles.scss file */
+// .modal-content {
+//   background-color: #ca26d9; /* Set the desired background color */
+// }
+
+.status-badge {
+  display: inline-block;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
 }
+
+.status-replied {
+  background: rgba(72, 169, 31, 0.16);
+  color: #63c81f;
+}
+
+.status-pending {
+  background: rgba(255, 193, 7, 0.16);
+  color: #ffc107;
+}
+
+// .btn-outline-flow {
+//   border-radius: 50px;
+//   border: 1px solid rgba(255, 255, 255, 0.2);
+//   background: rgba(255, 255, 255, 0.03);
+//   color: #fff;
+//   font-weight: 500;
+
+//   &:hover {
+//     background: rgba(202, 38, 217, 0.2);
+//     border-color: #ca26d9;
+//   }
+// }
+
+// .btn-flow-save {
+//   background: #ca26d9;
+//   color: #fff;
+//   border-radius: 50px;
+//   padding: 8px 20px;
+//   font-weight: 500;
+//   transition: all 0.2s;
+//   border: none;
+
+//   &:hover:not(:disabled) {
+//     background: #a01fc2;
+//   }
+
+//   &:disabled {
+//     opacity: 0.65;
+//     cursor: not-allowed;
+//   }
+// }
+
+// .side-drawer {
+//   position: fixed;
+//   top: 0;
+//   right: -450px;
+//   width: 400px;
+//   height: 100vh;
+//   background: #1d1e26;
+//   z-index: 1050;
+//   transition: all 0.4s cubic-bezier(0.05, 0.74, 0.2, 0.99);
+//   box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3);
+//   display: flex;
+//   flex-direction: column;
+//   padding: 0;
+
+//   &.open {
+//     right: 0;
+//   }
+
+//   .drawer-header {
+//     padding: 25px;
+//     background: rgba(255, 255, 255, 0.03);
+//     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+//     h3 {
+//       margin: 0;
+//       color: #fff;
+//       font-size: 18px;
+//       font-weight: 700;
+//     }
+
+//     .btn-close {
+//       filter: invert(1) grayscale(100%) brightness(200%);
+//       opacity: 0.7;
+
+//       &:hover {
+//         opacity: 1;
+//       }
+//     }
+//   }
+
+//   .drawer-body {
+//     flex: 1;
+//     overflow-y: auto;
+//     padding: 25px;
+//   }
+
+//   .drawer-footer {
+//     padding: 20px 25px;
+//     background: rgba(255, 255, 255, 0.02);
+//     border-top: 1px solid rgba(255, 255, 255, 0.05);
+//   }
+// }
+
+// .drawer-backdrop {
+//   position: fixed;
+//   top: 0;
+//   left: 0;
+//   width: 100vw;
+//   height: 100vh;
+//   background: rgba(0, 0, 0, 0.5);
+//   backdrop-filter: blur(4px);
+//   z-index: 1040;
+//   animation: fadeIn 0.3s ease;
+// }
+
+// @keyframes fadeIn {
+//   from {
+//     opacity: 0;
+//   }
+
+//   to {
+//     opacity: 1;
+//   }
+// }
+
+// .custom-scrollbar::-webkit-scrollbar {
+//   width: 6px;
+// }
+
+// .custom-scrollbar::-webkit-scrollbar-track {
+//   background: rgba(255, 255, 255, 0.02);
+// }
+
+// .custom-scrollbar::-webkit-scrollbar-thumb {
+//   background: rgba(255, 255, 255, 0.1);
+//   border-radius: 10px;
+// }
+
+// .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+//   background: rgba(255, 255, 255, 0.2);
+// }
+
+.reply-block {
+  margin-bottom: 1.25rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.reply-label {
+  display: block;
+  color: #aeb7cf;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.4rem;
+}
+
+.reply-message {
+  color: #d8dcef;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-bottom: 0.5rem;
+}
+
+@import '../music/music.component.scss';
+@import '../daily-energy-flow/daily-energy-flow.component.scss';

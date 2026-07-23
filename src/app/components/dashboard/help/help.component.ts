@@ -4,6 +4,17 @@ import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { HttpService } from '../../../shared/services/http.service';
 
+interface SupportTicket {
+  id: number;
+  user_id?: string;
+  email: string;
+  message: string;
+  reply: string | null;
+  replied_at: string | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
 @Component({
   selector: 'app-help',
   templateUrl: './help.component.html',
@@ -11,11 +22,18 @@ import { HttpService } from '../../../shared/services/http.service';
 })
 export class HelpComponent {
 
-  public helps: [] = [];
+  public helps: SupportTicket[] = [];
   public duePage!: any;
   public total!: any;
   public searchInput!: any;
   selectedHelp: any;
+
+  isReplyModalOpen = false;
+  selectedTicket: SupportTicket | null = null;
+  isEditingReply = false;
+  replyText = '';
+  isSubmittingReply = false;
+  replyError: string | null = null;
 
   constructor(
     private http: HttpService,
@@ -74,7 +92,73 @@ export class HelpComponent {
       }
     }
 
-  
+    openReplyModal(item: SupportTicket) {
+      this.selectedTicket = item;
+      this.replyText = item.reply || '';
+      this.isEditingReply = !item.reply;
+      this.replyError = null;
+      this.isReplyModalOpen = true;
+    }
+
+    closeReplyModal() {
+      this.isReplyModalOpen = false;
+      this.selectedTicket = null;
+      this.replyText = '';
+      this.isEditingReply = false;
+      this.replyError = null;
+    }
+
+    startEditReply() {
+      if (!this.selectedTicket) {
+        return;
+      }
+      this.isEditingReply = true;
+      this.replyText = this.selectedTicket.reply || '';
+      this.replyError = null;
+    }
+
+    cancelEditReply() {
+      if (this.selectedTicket?.reply) {
+        this.isEditingReply = false;
+        this.replyText = this.selectedTicket.reply;
+        this.replyError = null;
+      } else {
+        this.closeReplyModal();
+      }
+    }
+
+    async submitReply() {
+      if (!this.selectedTicket) {
+        return;
+      }
+
+      const trimmedReply = (this.replyText || '').trim();
+      if (!trimmedReply) {
+        this.replyError = 'Reply message cannot be empty.';
+        return;
+      }
+
+      this.isSubmittingReply = true;
+      this.replyError = null;
+
+      try {
+        const res: any = await this.http
+          .post(`/support/${this.selectedTicket.id}/reply`, { reply: trimmedReply }, true)
+          .toPromise();
+
+        const updated: SupportTicket = res?.data;
+        if (updated) {
+          this.helps = this.helps.map((h) => (h.id === updated.id ? { ...h, ...updated } : h));
+          this.selectedTicket = updated;
+        }
+        this.isEditingReply = false;
+      } catch (error) {
+        console.error('Error sending reply:', error);
+        this.replyError = 'Unable to send reply. Please try again.';
+      } finally {
+        this.isSubmittingReply = false;
+      }
+    }
   }
   
 
